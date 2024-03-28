@@ -7,6 +7,7 @@
 
 package com.powsybl.openrao.searchtreerao.linearoptimisation.algorithms.linearproblem;
 
+import com.google.ortools.Loader;
 import com.powsybl.openrao.commons.OpenRaoException;
 import com.powsybl.openrao.commons.logs.OpenRaoLoggerProvider;
 import com.powsybl.openrao.raoapi.parameters.RangeActionsOptimizationParameters;
@@ -39,6 +40,7 @@ public class OpenRaoMPSolver {
     }
 
     public OpenRaoMPSolver(String optProblemName, RangeActionsOptimizationParameters.Solver solver) {
+        Loader.loadNativeLibraries();
         switch (solver) {
             case CBC:
                 this.mpSolver = new MPSolver(optProblemName, MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
