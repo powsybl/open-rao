@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: powsybl/powsybl-open-loadflow
-          ref: refs/heads/main
+          ref: refs/heads/bump_6.3.0_alpha_1_for_rao
 
       - name: Build and install powsybl-open-loadflow with Maven
         run: mvn --batch-mode -DskipTests=true --file ../powsybl-open-loadflow/pom.xml install
