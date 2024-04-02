@@ -12,8 +12,6 @@ import com.powsybl.openrao.data.cracapi.NetworkElement;
 import com.powsybl.openrao.data.cracapi.networkaction.SwitchPair;
 import com.powsybl.iidm.network.Network;
 
-import java.util.Set;
-
 /***
  * @author Peter Mitri {@literal <peter.mitri at rte-france.com>}
  */
@@ -42,11 +40,6 @@ public class SwitchPairImpl implements SwitchPair {
             .build()
             .toModification()
             .apply(network);
-    }
-
-    @Override
-    public Set<NetworkElement> getNetworkElements() {
-        return Set.of(switchToOpen, switchToClose);
     }
 
     @Override

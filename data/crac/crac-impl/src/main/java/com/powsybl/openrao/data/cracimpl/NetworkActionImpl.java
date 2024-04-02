@@ -26,11 +26,13 @@ public class NetworkActionImpl extends AbstractRemedialAction<NetworkAction> imp
 
     private static final double EPSILON = 0.1;
     private final Set<ElementaryAction> elementaryActions;
+    private final Set<NetworkElement> networkElements;
 
     NetworkActionImpl(String id, String name, String operator, Set<UsageRule> usageRules,
-                             Set<ElementaryAction> elementaryNetworkActions, Integer speed) {
+                             Set<ElementaryAction> elementaryNetworkActions, Integer speed, Set<NetworkElement> networkElements) {
         super(id, name, operator, usageRules, speed);
         this.elementaryActions = new HashSet<>(elementaryNetworkActions);
+        this.networkElements = new HashSet<>(networkElements);
     }
 
     public Set<ElementaryAction> getElementaryActions() {
@@ -128,9 +130,7 @@ public class NetworkActionImpl extends AbstractRemedialAction<NetworkAction> imp
 
     @Override
     public Set<NetworkElement> getNetworkElements() {
-        Set<NetworkElement> networkElements = new HashSet<>();
-        elementaryActions.forEach(action -> networkElements.addAll(action.getNetworkElements()));
-        return networkElements;
+        return this.networkElements;
     }
 
     @Override

@@ -10,6 +10,7 @@ package com.powsybl.openrao.data.cracimpl;
 import com.powsybl.iidm.network.Generator;
 import com.powsybl.iidm.network.Switch;
 import com.powsybl.openrao.data.cracapi.Identifiable;
+import com.powsybl.openrao.data.cracapi.NetworkElement;
 import com.powsybl.openrao.data.cracapi.networkaction.ElementaryAction;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
 import com.powsybl.openrao.data.cracapi.usagerule.UsageRule;
@@ -32,13 +33,19 @@ class NetworkActionImplTest {
     private ElementaryAction elementaryAction2;
     private UsageRule mockedUsageRule1;
     private UsageRule mockedUsageRule2;
+    NetworkElement ne1;
+    NetworkElement ne2;
+    NetworkElement ne3;
 
     @BeforeEach
     public void setUp() {
         mockedUsageRule1 = Mockito.mock(UsageRule.class);
         mockedUsageRule2 = Mockito.mock(UsageRule.class);
-        elementaryAction1 = new InjectionSetpointImpl(new NetworkElementImpl("ne1"), 10.0, null);
-        elementaryAction2 = new SwitchPairImpl(new NetworkElementImpl("ne2"), new NetworkElementImpl("ne3"));
+        ne1 = new NetworkElementImpl("ne1");
+        ne2 = new NetworkElementImpl("ne2");
+        ne3 = new NetworkElementImpl("ne3");
+        elementaryAction1 = new InjectionSetpointImpl(ne1, 10.0, null);
+        elementaryAction2 = new SwitchPairImpl(ne2, ne3);
     }
 
     @Test
@@ -49,7 +56,8 @@ class NetworkActionImplTest {
             "operator",
             new HashSet<>(Collections.singleton(mockedUsageRule1)),
             Collections.singleton(elementaryAction1),
-                10
+                10,
+            Collections.singleton(ne1)
         );
 
         assertEquals("id", networkAction.getId());
@@ -57,7 +65,7 @@ class NetworkActionImplTest {
         assertEquals("operator", networkAction.getOperator());
         assertEquals(1, networkAction.getUsageRules().size());
         assertEquals(1, networkAction.getElementaryActions().size());
-        assertEquals("ne1", networkAction.getElementaryActions().iterator().next().getNetworkElements().iterator().next().getId());
+        assertEquals("ne1", networkAction.getNetworkElements().iterator().next().getId());
     }
 
     @Test
@@ -68,7 +76,8 @@ class NetworkActionImplTest {
             "operator",
                 new HashSet<>(Arrays.asList(mockedUsageRule1, mockedUsageRule2)),
                 new HashSet<>(Arrays.asList(elementaryAction1, elementaryAction2)),
-                10
+                10,
+            new HashSet<>(Arrays.asList(ne1, ne2, ne3))
         );
 
         assertEquals("id", networkAction.getId());
@@ -88,7 +97,9 @@ class NetworkActionImplTest {
             "operator",
             new HashSet<>(List.of(mockedUsageRule1, mockedUsageRule2)),
             Set.of(elementaryAction1, elementaryAction2),
-                10
+                10,
+            new HashSet<>(Arrays.asList(ne1, ne2, ne3))
+
         );
 
         Generator generator = Mockito.mock(Generator.class);
@@ -118,7 +129,9 @@ class NetworkActionImplTest {
             "operator",
             new HashSet<>(List.of(mockedUsageRule1, mockedUsageRule2)),
             Set.of(elementaryAction1, elementaryAction2),
-                10
+                10,
+            new HashSet<>(Arrays.asList(ne1, ne2, ne3))
+
         );
 
         Generator generator = Mockito.mock(Generator.class);

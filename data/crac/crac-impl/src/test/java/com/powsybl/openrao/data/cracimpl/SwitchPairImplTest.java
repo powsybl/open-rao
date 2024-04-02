@@ -7,7 +7,9 @@
 
 package com.powsybl.openrao.data.cracimpl;
 
+import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.NetworkElement;
+import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
 import com.powsybl.openrao.data.cracapi.networkaction.SwitchPair;
 import com.powsybl.openrao.data.cracapi.networkaction.TopologicalAction;
 import com.powsybl.iidm.network.Network;
@@ -15,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,60 +37,74 @@ class SwitchPairImplTest {
 
     @Test
     void hasImpactOnNetwork() {
-        SwitchPair sp1 = new SwitchPairImpl(switch1, switch2);
-        SwitchPair sp2 = new SwitchPairImpl(switch2, switch1);
+        Crac crac = new CracImplFactory().create("cracId");
+        NetworkAction sp1 = crac.newNetworkAction()
+            .withId("sp1")
+            .newSwitchPair()
+                .withSwitchToOpen("NNL3AA11 NNL3AA12 1")
+                .withSwitchToClose("NNL3AA13 NNL3AA14 1")
+                .add()
+            .add();
+        NetworkAction sp2 = crac.newNetworkAction()
+            .withId("sp2")
+            .newSwitchPair()
+                .withSwitchToOpen("NNL3AA13 NNL3AA14 1")
+                .withSwitchToClose("NNL3AA11 NNL3AA12 1")
+                .add()
+            .add();
         assertEquals(Set.of(switch1, switch2), sp1.getNetworkElements());
         assertEquals(Set.of(switch1, switch2), sp2.getNetworkElements());
 
         network.getSwitch(switch1.getId()).setOpen(true);
         network.getSwitch(switch2.getId()).setOpen(false);
-        assertFalse(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp1), null).hasImpactOnNetwork(network));
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp2), null).hasImpactOnNetwork(network));
+        assertFalse(sp1.hasImpactOnNetwork(network));
+        assertTrue(sp2.hasImpactOnNetwork(network));
 
         network.getSwitch(switch1.getId()).setOpen(true);
         network.getSwitch(switch2.getId()).setOpen(true);
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp1), null).hasImpactOnNetwork(network));
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp2), null).hasImpactOnNetwork(network));
+        assertTrue(sp1.hasImpactOnNetwork(network));
+        assertTrue(sp2.hasImpactOnNetwork(network));
 
         network.getSwitch(switch1.getId()).setOpen(false);
         network.getSwitch(switch2.getId()).setOpen(false);
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp1), null).hasImpactOnNetwork(network));
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp2), null).hasImpactOnNetwork(network));
+        assertTrue(sp1.hasImpactOnNetwork(network));
+        assertTrue(sp2.hasImpactOnNetwork(network));
     }
 
     @Test
     void testCanBeApplied() {
-        SwitchPair sp1 = new SwitchPairImpl(switch1, switch2);
-        SwitchPair sp2 = new SwitchPairImpl(switch2, switch1);
+        Crac crac = new CracImplFactory().create("cracId");
+        NetworkAction sp1 = crac.newNetworkAction()
+            .withId("sp1")
+            .newSwitchPair()
+            .withSwitchToOpen("NNL3AA11 NNL3AA12 1")
+            .withSwitchToClose("NNL3AA13 NNL3AA14 1")
+            .add()
+            .add();
+        NetworkAction sp2 = crac.newNetworkAction()
+            .withId("sp2")
+            .newSwitchPair()
+            .withSwitchToOpen("NNL3AA13 NNL3AA14 1")
+            .withSwitchToClose("NNL3AA11 NNL3AA12 1")
+            .add()
+            .add();
         assertEquals(Set.of(switch1, switch2), sp1.getNetworkElements());
         assertEquals(Set.of(switch1, switch2), sp2.getNetworkElements());
 
         network.getSwitch(switch1.getId()).setOpen(true);
         network.getSwitch(switch2.getId()).setOpen(false);
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp1), null).canBeApplied(network));
-        assertTrue(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp2), null).canBeApplied(network));
+        assertTrue(sp1.canBeApplied(network));
+        assertTrue(sp2.canBeApplied(network));
 
         network.getSwitch(switch1.getId()).setOpen(true);
         network.getSwitch(switch2.getId()).setOpen(true);
-        assertFalse(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp1), null).canBeApplied(network));
-        assertFalse(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp2), null).canBeApplied(network));
+        assertFalse(sp1.canBeApplied(network));
+        assertFalse(sp2.canBeApplied(network));
 
         network.getSwitch(switch1.getId()).setOpen(false);
         network.getSwitch(switch2.getId()).setOpen(false);
-        assertFalse(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp1), null).canBeApplied(network));
-        assertFalse(new NetworkActionImpl(null, null, null, null,
-            Collections.singleton(sp2), null).canBeApplied(network));
+        assertFalse(sp1.canBeApplied(network));
+        assertFalse(sp2.canBeApplied(network));
     }
 
     @Test

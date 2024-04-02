@@ -6,11 +6,7 @@
  */
 
 package com.powsybl.openrao.data.cracapi.networkaction;
-
-import com.powsybl.openrao.data.cracapi.NetworkElement;
 import com.powsybl.iidm.network.Network;
-
-import java.util.Set;
 
 /**
  * Generic interface for the definition of elementary actions
@@ -26,9 +22,4 @@ public interface ElementaryAction {
      * Apply the elementary action on a given network.
      */
     void apply(Network network);
-
-    /**
-     * Get the Network Elements associated to the elementary action
-     */
-    Set<NetworkElement> getNetworkElements();
 }
