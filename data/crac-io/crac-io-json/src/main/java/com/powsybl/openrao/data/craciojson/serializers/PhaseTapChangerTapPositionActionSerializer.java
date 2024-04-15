@@ -7,9 +7,9 @@
 
 package com.powsybl.openrao.data.craciojson.serializers;
 
-import com.powsybl.openrao.data.cracapi.networkaction.SwitchPair;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.powsybl.action.PhaseTapChangerTapPositionAction;
 
 import java.io.IOException;
 
@@ -18,12 +18,12 @@ import static com.powsybl.openrao.data.craciojson.JsonSerializationConstants.*;
 /**
  * @author Peter Mitri {@literal <peter.mitri at rte-france.com>}
  */
-public class SwitchPairSerializer extends AbstractJsonSerializer<SwitchPair> {
+public class PhaseTapChangerTapPositionActionSerializer extends AbstractJsonSerializer<PhaseTapChangerTapPositionAction> {
     @Override
-    public void serialize(SwitchPair value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(PhaseTapChangerTapPositionAction value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
-        gen.writeStringField(OPEN_ACTION, value.getSwitchToOpen().getId());
-        gen.writeStringField(CLOSE_ACTION, value.getSwitchToClose().getId());
+        gen.writeStringField(NETWORK_ELEMENT_ID, value.getTransformerId());
+        gen.writeNumberField(SETPOINT, value.getTapPosition());
         gen.writeEndObject();
     }
 }

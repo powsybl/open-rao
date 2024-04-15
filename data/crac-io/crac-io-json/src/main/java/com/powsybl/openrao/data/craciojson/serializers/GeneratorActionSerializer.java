@@ -7,9 +7,10 @@
 
 package com.powsybl.openrao.data.craciojson.serializers;
 
-import com.powsybl.openrao.data.cracapi.networkaction.SwitchPair;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.powsybl.action.GeneratorAction;
+import com.powsybl.openrao.commons.Unit;
 
 import java.io.IOException;
 
@@ -18,12 +19,13 @@ import static com.powsybl.openrao.data.craciojson.JsonSerializationConstants.*;
 /**
  * @author Peter Mitri {@literal <peter.mitri at rte-france.com>}
  */
-public class SwitchPairSerializer extends AbstractJsonSerializer<SwitchPair> {
+public class GeneratorActionSerializer extends AbstractJsonSerializer<GeneratorAction> {
     @Override
-    public void serialize(SwitchPair value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(GeneratorAction value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
-        gen.writeStringField(OPEN_ACTION, value.getSwitchToOpen().getId());
-        gen.writeStringField(CLOSE_ACTION, value.getSwitchToClose().getId());
+        gen.writeStringField(NETWORK_ELEMENT_ID, value.getGeneratorId());
+        gen.writeNumberField(SETPOINT, value.getActivePowerValue().getAsDouble());
+        gen.writeStringField(UNIT, serializeUnit(Unit.MEGAWATT));
         gen.writeEndObject();
     }
 }

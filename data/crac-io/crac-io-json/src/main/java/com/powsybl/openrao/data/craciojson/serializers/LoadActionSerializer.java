@@ -9,6 +9,8 @@ package com.powsybl.openrao.data.craciojson.serializers;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.powsybl.action.LoadAction;
+import com.powsybl.openrao.commons.Unit;
 
 import java.io.IOException;
 
@@ -17,12 +19,13 @@ import static com.powsybl.openrao.data.craciojson.JsonSerializationConstants.*;
 /**
  * @author Peter Mitri {@literal <peter.mitri at rte-france.com>}
  */
-public class TopologicalActionSerializer extends AbstractJsonSerializer<TopologicalAction> {
+public class LoadActionSerializer extends AbstractJsonSerializer<LoadAction> {
     @Override
-    public void serialize(TopologicalAction value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(LoadAction value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
-        gen.writeStringField(NETWORK_ELEMENT_ID, value.getNetworkElement().getId());
-        gen.writeStringField(ACTION_TYPE, serializeActionType(value.getActionType()));
+        gen.writeStringField(NETWORK_ELEMENT_ID, value.getLoadId());
+        gen.writeNumberField(SETPOINT, value.getActivePowerValue().getAsDouble());
+        gen.writeStringField(UNIT, serializeUnit(Unit.MEGAWATT));
         gen.writeEndObject();
     }
 }
