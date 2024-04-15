@@ -13,8 +13,6 @@ import com.powsybl.openrao.commons.OpenRaoException;
 import com.powsybl.openrao.data.cracapi.*;
 import com.powsybl.openrao.data.cracapi.cnec.AngleCnec;
 import com.powsybl.openrao.data.cracapi.cnec.Cnec;
-import com.powsybl.openrao.data.cracapi.networkaction.ElementaryAction;
-import com.powsybl.openrao.data.cracapi.networkaction.InjectionSetpoint;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
 import com.powsybl.openrao.data.cracapi.usagerule.OnAngleConstraint;
 import com.powsybl.openrao.data.raoresultapi.RaoResult;

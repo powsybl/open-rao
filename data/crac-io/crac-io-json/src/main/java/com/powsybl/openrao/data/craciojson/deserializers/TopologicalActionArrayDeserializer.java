@@ -9,7 +9,7 @@ package com.powsybl.openrao.data.craciojson.deserializers;
 
 import com.powsybl.openrao.commons.OpenRaoException;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkActionAdder;
-import com.powsybl.openrao.data.cracapi.networkaction.TopologicalActionAdder;
+import com.powsybl.openrao.data.cracapi.networkaction.TerminalsConnectionActionAdder;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -30,7 +30,7 @@ public final class TopologicalActionArrayDeserializer {
             throw new OpenRaoException(String.format("Cannot deserialize %s before %s", TOPOLOGICAL_ACTIONS, NETWORK_ELEMENTS_NAME_PER_ID));
         }
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            TopologicalActionAdder adder = ownerAdder.newTopologicalAction();
+            TerminalsConnectionActionAdder adder = ownerAdder.newTopologicalAction();
             while (!jsonParser.nextToken().isStructEnd()) {
                 switch (jsonParser.getCurrentName()) {
                     case NETWORK_ELEMENT_ID:

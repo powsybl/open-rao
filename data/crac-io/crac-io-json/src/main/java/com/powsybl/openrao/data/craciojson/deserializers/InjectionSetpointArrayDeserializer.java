@@ -9,7 +9,7 @@ package com.powsybl.openrao.data.craciojson.deserializers;
 
 import com.powsybl.openrao.commons.OpenRaoException;
 import com.powsybl.openrao.commons.Unit;
-import com.powsybl.openrao.data.cracapi.networkaction.InjectionSetpointAdder;
+import com.powsybl.openrao.data.cracapi.networkaction.GeneratorActionAdder;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkActionAdder;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -31,7 +31,7 @@ public final class InjectionSetpointArrayDeserializer {
             throw new OpenRaoException(String.format("Cannot deserialize %s before %s", INJECTION_SETPOINTS, NETWORK_ELEMENTS_NAME_PER_ID));
         }
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            InjectionSetpointAdder adder = ownerAdder.newInjectionSetPoint();
+            GeneratorActionAdder adder = ownerAdder.newInjectionSetPoint();
             while (!jsonParser.nextToken().isStructEnd()) {
                 switch (jsonParser.getCurrentName()) {
                     case NETWORK_ELEMENT_ID:

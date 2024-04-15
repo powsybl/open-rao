@@ -7,7 +7,6 @@
 
 package com.powsybl.openrao.data.craciojson.serializers;
 
-import com.powsybl.openrao.data.cracapi.networkaction.TopologicalAction;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 

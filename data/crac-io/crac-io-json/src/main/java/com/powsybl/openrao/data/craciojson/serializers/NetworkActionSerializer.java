@@ -7,6 +7,7 @@
 
 package com.powsybl.openrao.data.craciojson.serializers;
 
+import com.powsybl.action.Action;
 import com.powsybl.openrao.data.cracapi.networkaction.*;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -33,10 +34,10 @@ public class NetworkActionSerializer extends AbstractJsonSerializer<NetworkActio
     }
 
     private void serializeElementaryActions(NetworkAction networkAction, Class<? extends ElementaryAction> elementaryActionType, String arrayName, JsonGenerator gen) throws IOException {
-        List<ElementaryAction> actions = networkAction.getElementaryActions().stream().filter(action -> elementaryActionType.isAssignableFrom(action.getClass())).toList();
+        List<Action> actions = networkAction.getElementaryActions().stream().filter(action -> elementaryActionType.isAssignableFrom(action.getClass())).toList();
         if (!actions.isEmpty()) {
             gen.writeArrayFieldStart(arrayName);
-            for (ElementaryAction ea : actions) {
+            for (Action ea : actions) {
                 gen.writeObject(ea);
             }
             gen.writeEndArray();
