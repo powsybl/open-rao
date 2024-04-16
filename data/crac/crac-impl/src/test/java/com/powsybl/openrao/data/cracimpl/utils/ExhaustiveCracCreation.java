@@ -184,7 +184,7 @@ public final class ExhaustiveCracCreation {
         crac.newNetworkAction().withId("pstSetpointRaId")
                 .withName("pstSetpointRaName")
                 .withOperator("RTE")
-                .newPstSetPoint().withSetpoint(15).withNetworkElement("pst").add()
+                .newPhaseTapChangerTapPositionAction().withNormalizedSetpoint(15).withNetworkElement("pst").add()
                 .newOnInstantUsageRule().withUsageMethod(UsageMethod.AVAILABLE).withInstant(PREVENTIVE_INSTANT_ID).add()
                 .newOnContingencyStateUsageRule().withUsageMethod(UsageMethod.FORCED).withContingency(contingency1Id).withInstant(CURATIVE_INSTANT_ID).add()
                 .add();
@@ -193,8 +193,8 @@ public final class ExhaustiveCracCreation {
         crac.newNetworkAction().withId("complexNetworkActionId")
                 .withName("complexNetworkActionName")
                 .withOperator("RTE")
-                .newPstSetPoint().withSetpoint(5).withNetworkElement("pst").add()
-                .newTopologicalAction().withActionType(ActionType.CLOSE).withNetworkElement("ne1Id").add()
+                .newPhaseTapChangerTapPositionAction().withNormalizedSetpoint(5).withNetworkElement("pst").add()
+                .newSwitchAction().withActionType(ActionType.CLOSE).withNetworkElement("ne1Id").add()
                 .newOnInstantUsageRule().withUsageMethod(UsageMethod.AVAILABLE).withInstant(PREVENTIVE_INSTANT_ID).add()
                 .newOnContingencyStateUsageRule().withUsageMethod(UsageMethod.FORCED).withInstant(PREVENTIVE_INSTANT_ID).add()
                 .add();
@@ -203,7 +203,7 @@ public final class ExhaustiveCracCreation {
         crac.newNetworkAction().withId("injectionSetpointRaId")
                 .withName("injectionSetpointRaName")
                 .withOperator("RTE")
-                .newInjectionSetPoint().withSetpoint(260).withNetworkElement("injection").withUnit(Unit.SECTION_COUNT).add()
+                .newShuntCompensatorPositionAction().withSectionCount(260).withNetworkElement("injection").add()
                 .newOnFlowConstraintUsageRule().withFlowCnec("cnec3autoId").withInstant(AUTO_INSTANT_ID).withUsageMethod(UsageMethod.FORCED).add()
                 .add();
 

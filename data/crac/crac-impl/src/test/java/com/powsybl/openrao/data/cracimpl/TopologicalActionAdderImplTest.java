@@ -6,6 +6,7 @@
  */
 package com.powsybl.openrao.data.cracimpl;
 
+import com.powsybl.action.TerminalsConnectionAction;
 import com.powsybl.openrao.commons.OpenRaoException;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.*;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
  */
 class TopologicalActionAdderImplTest {
+    //TODO separate in 2 types
 
     private Crac crac;
     private NetworkActionAdder networkActionAdder;
@@ -33,15 +35,15 @@ class TopologicalActionAdderImplTest {
 
     @Test
     void testOk() {
-        NetworkAction networkAction = networkActionAdder.newTopologicalAction()
+        NetworkAction networkAction = networkActionAdder.newTerminalsConnectionAction()
             .withNetworkElement("branchNetworkElementId")
             .withActionType(ActionType.OPEN)
             .add()
             .add();
 
-        TopologicalAction topologicalAction = (TopologicalAction) networkAction.getElementaryActions().iterator().next();
-        assertEquals("branchNetworkElementId", topologicalAction.getNetworkElement().getId());
-        assertEquals(ActionType.OPEN, topologicalAction.getActionType());
+        TerminalsConnectionAction topologicalAction = (TerminalsConnectionAction) networkAction.getElementaryActions().iterator().next();
+        assertEquals("branchNetworkElementId", topologicalAction.getElementId());
+        assertTrue(topologicalAction.isOpen());
 
         // check that network element has been added in CracImpl
         assertEquals(1, ((CracImpl) crac).getNetworkElements().size());
@@ -50,14 +52,14 @@ class TopologicalActionAdderImplTest {
 
     @Test
     void testNoNetworkElement() {
-        TerminalsConnectionActionAdder topologicalActionAdder = networkActionAdder.newTopologicalAction()
+        TerminalsConnectionActionAdder topologicalActionAdder = networkActionAdder.newTerminalsConnectionAction()
             .withActionType(ActionType.OPEN);
         assertThrows(OpenRaoException.class, topologicalActionAdder::add);
     }
 
     @Test
     void testNoActionType() {
-        TerminalsConnectionActionAdder topologicalActionAdder = networkActionAdder.newTopologicalAction()
+        TerminalsConnectionActionAdder topologicalActionAdder = networkActionAdder.newTerminalsConnectionAction()
             .withNetworkElement("branchNetworkElementId");
         assertThrows(OpenRaoException.class, topologicalActionAdder::add);
     }
