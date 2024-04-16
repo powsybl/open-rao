@@ -6,7 +6,7 @@
  */
 package com.powsybl.openrao.data.craccreation.creator.csaprofile.craccreator.remedialaction;
 
-import com.powsybl.openrao.commons.Unit;
+import com.powsybl.iidm.network.*;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.ActionType;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkActionAdder;
@@ -14,16 +14,9 @@ import com.powsybl.openrao.data.craccreation.creator.api.ImportStatus;
 import com.powsybl.openrao.data.craccreation.creator.csaprofile.craccreator.CsaProfileConstants;
 import com.powsybl.openrao.data.craccreation.creator.csaprofile.craccreator.CsaProfileCracUtils;
 import com.powsybl.openrao.data.craccreation.util.OpenRaoImportException;
-import com.powsybl.iidm.network.Generator;
-import com.powsybl.iidm.network.Load;
-import com.powsybl.iidm.network.Network;
-import com.powsybl.iidm.network.ShuntCompensator;
 import com.powsybl.triplestore.api.PropertyBag;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Mohamed Ben-rejeb {@literal <mohamed.ben-rejeb at rte-france.com>}
@@ -115,12 +108,25 @@ public class NetworkActionCreator {
 
         Optional<String> normalEnabled = Optional.ofNullable(rotatingMachineActionPropertyBag.get(CsaProfileConstants.NORMAL_ENABLED));
         if (normalEnabled.isEmpty() || Boolean.parseBoolean(normalEnabled.get())) {
-            networkActionAdder.newInjectionSetPoint()
-                .withSetpoint(setPointValue)
-                .withNetworkElement(rotatingMachineId)
-                .withUnit(Unit.MEGAWATT)
-                .add();
-            return true;
+            Identifiable<?> networkElement = network.getIdentifiable(rotatingMachineId);
+            if (Objects.isNull(networkElement)) {
+                throw new OpenRaoImportException(ImportStatus.ELEMENT_NOT_FOUND_IN_NETWORK, String.format("%s not found in network", rotatingMachineId));
+            }
+            if (networkElement.getType() == IdentifiableType.GENERATOR) {
+                networkActionAdder.newGeneratorAction()
+                    .withActivePowerValue(setPointValue)
+                    .withNetworkElement(rotatingMachineId)
+                    .add();
+                return true;
+            }
+            if (networkElement.getType() == IdentifiableType.LOAD) {
+                networkActionAdder.newLoadAction()
+                    .withActivePowerValue(setPointValue)
+                    .withNetworkElement(rotatingMachineId)
+                    .add();
+                return true;
+            }
+            throw new OpenRaoImportException(ImportStatus.INCONSISTENCY_IN_DATA, "CSA remedial action " + remedialActionId + " is an injection on rotating machine should be on generator or load only, not on " + networkElement.getType());
         } else {
             alterations.add("Elementary rotating machine action on rotating machine %s for remedial action %s ignored because the RotatingMachineAction is disabled.".formatted(rotatingMachineId, remedialActionId));
             return false;
@@ -138,10 +144,16 @@ public class NetworkActionCreator {
 
         Optional<String> normalEnabled = Optional.ofNullable(shuntCompensatorModificationPropertyBag.get(CsaProfileConstants.NORMAL_ENABLED));
         if (normalEnabled.isEmpty() || Boolean.parseBoolean(normalEnabled.get())) {
-            networkActionAdder.newInjectionSetPoint()
-                .withSetpoint(setPointValue)
+            Identifiable<?> networkElement = network.getIdentifiable(shuntCompensatorId);
+            if (Objects.isNull(networkElement)) {
+                throw new OpenRaoImportException(ImportStatus.ELEMENT_NOT_FOUND_IN_NETWORK, String.format("%s not found in network", shuntCompensatorId));
+            }
+            if (networkElement.getType() != IdentifiableType.SHUNT_COMPENSATOR) {
+                throw new OpenRaoImportException(ImportStatus.INCONSISTENCY_IN_DATA, "CSA remedial action " + remedialActionId + " is an injection on shunt compensator and should be on shunt compensator only, not on " + networkElement.getType());
+            }
+            networkActionAdder.newShuntCompensatorPositionAction()
+                .withSectionCount((int) setPointValue)
                 .withNetworkElement(shuntCompensatorId)
-                .withUnit(Unit.SECTION_COUNT)
                 .add();
             return true;
         } else {
@@ -248,7 +260,14 @@ public class NetworkActionCreator {
 
         Optional<String> normalEnabled = Optional.ofNullable(topologyActionPropertyBag.get(CsaProfileConstants.NORMAL_ENABLED));
         if (normalEnabled.isEmpty() || Boolean.parseBoolean(normalEnabled.get())) {
-            networkActionAdder.newTopologicalAction()
+            Identifiable<?> networkElement = network.getIdentifiable(switchId);
+            if (Objects.isNull(networkElement)) {
+                throw new OpenRaoImportException(ImportStatus.ELEMENT_NOT_FOUND_IN_NETWORK, String.format("%s not found in network", switchId));
+            }
+            if (networkElement.getType() != IdentifiableType.SWITCH) {
+                throw new OpenRaoImportException(ImportStatus.INCONSISTENCY_IN_DATA, "CSA remedial action " + remedialActionId + " is a topological action and should be on switch only, not on " + networkElement.getType());
+            }
+            networkActionAdder.newSwitchAction()
                 .withNetworkElement(switchId)
                 .withActionType("0".equals(normalValue) ? ActionType.CLOSE : ActionType.OPEN).add();
             return true;
