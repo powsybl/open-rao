@@ -21,7 +21,7 @@ import com.powsybl.openrao.data.cracapi.usagerule.UsageMethod;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.powsybl.openrao.data.cracimpl.utils.NetworkImportsUtil.createNetworkWithLines;
+import static com.powsybl.openrao.data.cracimpl.utils.NetworkImportsUtil.createNetworkForJsonRetrocompatibilityTest;
 
 /**
  * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
@@ -53,7 +53,7 @@ public final class ExhaustiveCracCreation {
 
     public static Network createAssociatedNetwork() {
         // should be Line because of ContingencyElementType.LINE;
-        return createNetworkWithLines("ne1Id", "ne2Id", "ne3Id");
+        return createNetworkForJsonRetrocompatibilityTest();
     }
 
     public static Crac create(CracFactory cracFactory) {
