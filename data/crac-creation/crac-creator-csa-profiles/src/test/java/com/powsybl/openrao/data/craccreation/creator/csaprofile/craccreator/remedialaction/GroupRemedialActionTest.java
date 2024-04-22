@@ -6,6 +6,9 @@
  */
 package com.powsybl.openrao.data.craccreation.creator.csaprofile.craccreator.remedialaction;
 
+import com.powsybl.action.Action;
+import com.powsybl.action.GeneratorAction;
+import com.powsybl.action.SwitchAction;
 import com.powsybl.openrao.data.cracapi.InstantKind;
 import com.powsybl.openrao.data.cracapi.networkaction.*;
 import com.powsybl.openrao.data.cracapi.usagerule.OnContingencyState;
@@ -80,12 +83,12 @@ class GroupRemedialActionTest {
         NetworkAction networkAction1 = cracCreationContext.getCrac().getNetworkAction("hdvc-200-be-de");
         assertEquals("HDVC Action - 200 MW BE to DE", networkAction1.getName());
         assertEquals(6, networkAction1.getElementaryActions().size());
-        assertTrue(hasTopologicalAction(networkAction1.getElementaryActions(), "BBE1AA1  BBE4AA1  1", ActionType.OPEN));
-        assertTrue(hasTopologicalAction(networkAction1.getElementaryActions(), "DDE3AA1  DDE4AA1  1", ActionType.OPEN));
-        assertTrue(hasInjectionSetPointAction(networkAction1.getElementaryActions(), "BBE1AA1 _generator", -200));
-        assertTrue(hasInjectionSetPointAction(networkAction1.getElementaryActions(), "BBE2AA1 _generator", -200));
-        assertTrue(hasInjectionSetPointAction(networkAction1.getElementaryActions(), "DDE1AA1 _generator", 200));
-        assertTrue(hasInjectionSetPointAction(networkAction1.getElementaryActions(), "DDE2AA1 _generator", 200));
+        assertTrue(hasSwitchAction(networkAction1.getElementaryActions(), "BBE1AA1  BBE4AA1  1", ActionType.OPEN));
+        assertTrue(hasSwitchAction(networkAction1.getElementaryActions(), "DDE3AA1  DDE4AA1  1", ActionType.OPEN));
+        assertTrue(hasGeneratorAction(networkAction1.getElementaryActions(), "BBE1AA1 _generator", -200));
+        assertTrue(hasGeneratorAction(networkAction1.getElementaryActions(), "BBE2AA1 _generator", -200));
+        assertTrue(hasGeneratorAction(networkAction1.getElementaryActions(), "DDE1AA1 _generator", 200));
+        assertTrue(hasGeneratorAction(networkAction1.getElementaryActions(), "DDE2AA1 _generator", 200));
         UsageRule ur1 = networkAction1.getUsageRules().iterator().next();
         assertEquals(InstantKind.CURATIVE, ur1.getInstant().getKind());
         assertEquals(UsageMethod.AVAILABLE, ur1.getUsageMethod());
@@ -94,12 +97,12 @@ class GroupRemedialActionTest {
         NetworkAction networkAction2 = cracCreationContext.getCrac().getNetworkAction("hdvc-200-de-be");
         assertEquals("HDVC Action - 200 MW DE to BE", networkAction2.getName());
         assertEquals(6, networkAction2.getElementaryActions().size());
-        assertTrue(hasTopologicalAction(networkAction2.getElementaryActions(), "BBE1AA1  BBE4AA1  1", ActionType.OPEN));
-        assertTrue(hasTopologicalAction(networkAction2.getElementaryActions(), "DDE3AA1  DDE4AA1  1", ActionType.OPEN));
-        assertTrue(hasInjectionSetPointAction(networkAction2.getElementaryActions(), "BBE1AA1 _generator", 200));
-        assertTrue(hasInjectionSetPointAction(networkAction2.getElementaryActions(), "BBE2AA1 _generator", 200));
-        assertTrue(hasInjectionSetPointAction(networkAction2.getElementaryActions(), "DDE1AA1 _generator", -200));
-        assertTrue(hasInjectionSetPointAction(networkAction2.getElementaryActions(), "DDE2AA1 _generator", -200));
+        assertTrue(hasSwitchAction(networkAction2.getElementaryActions(), "BBE1AA1  BBE4AA1  1", ActionType.OPEN));
+        assertTrue(hasSwitchAction(networkAction2.getElementaryActions(), "DDE3AA1  DDE4AA1  1", ActionType.OPEN));
+        assertTrue(hasGeneratorAction(networkAction2.getElementaryActions(), "BBE1AA1 _generator", 200));
+        assertTrue(hasGeneratorAction(networkAction2.getElementaryActions(), "BBE2AA1 _generator", 200));
+        assertTrue(hasGeneratorAction(networkAction2.getElementaryActions(), "DDE1AA1 _generator", -200));
+        assertTrue(hasGeneratorAction(networkAction2.getElementaryActions(), "DDE2AA1 _generator", -200));
         UsageRule ur2 = networkAction2.getUsageRules().iterator().next();
         assertEquals(InstantKind.CURATIVE, ur2.getInstant().getKind());
         assertEquals(UsageMethod.AVAILABLE, ur2.getUsageMethod());
@@ -108,27 +111,29 @@ class GroupRemedialActionTest {
         NetworkAction networkAction3 = cracCreationContext.getCrac().getNetworkAction("hdvc-0");
         assertEquals("HDVC Action - 0 MW", networkAction3.getName());
         assertEquals(6, networkAction3.getElementaryActions().size());
-        assertTrue(hasTopologicalAction(networkAction3.getElementaryActions(), "BBE1AA1  BBE4AA1  1", ActionType.OPEN));
-        assertTrue(hasTopologicalAction(networkAction3.getElementaryActions(), "DDE3AA1  DDE4AA1  1", ActionType.OPEN));
-        assertTrue(hasInjectionSetPointAction(networkAction3.getElementaryActions(), "BBE1AA1 _generator", 0));
-        assertTrue(hasInjectionSetPointAction(networkAction3.getElementaryActions(), "BBE2AA1 _generator", 0));
-        assertTrue(hasInjectionSetPointAction(networkAction3.getElementaryActions(), "DDE1AA1 _generator", 0));
-        assertTrue(hasInjectionSetPointAction(networkAction3.getElementaryActions(), "DDE2AA1 _generator", 0));
+        assertTrue(hasSwitchAction(networkAction3.getElementaryActions(), "BBE1AA1  BBE4AA1  1", ActionType.OPEN));
+        assertTrue(hasSwitchAction(networkAction3.getElementaryActions(), "DDE3AA1  DDE4AA1  1", ActionType.OPEN));
+        assertTrue(hasGeneratorAction(networkAction3.getElementaryActions(), "BBE1AA1 _generator", 0));
+        assertTrue(hasGeneratorAction(networkAction3.getElementaryActions(), "BBE2AA1 _generator", 0));
+        assertTrue(hasGeneratorAction(networkAction3.getElementaryActions(), "DDE1AA1 _generator", 0));
+        assertTrue(hasGeneratorAction(networkAction3.getElementaryActions(), "DDE2AA1 _generator", 0));
         UsageRule ur3 = networkAction3.getUsageRules().iterator().next();
         assertEquals(InstantKind.CURATIVE, ur3.getInstant().getKind());
         assertEquals(UsageMethod.AVAILABLE, ur3.getUsageMethod());
     }
 
-    private boolean hasInjectionSetPointAction(Set<ElementaryAction> elementaryActions, String elementId, double setpoint) {
+    private boolean hasGeneratorAction(Set<Action> elementaryActions, String elementId, double activePowerValue) {
         return elementaryActions.stream()
-            .filter(InjectionSetpoint.class::isInstance)
-            .anyMatch(action -> ((InjectionSetpoint) action).getNetworkElement().getId().equals(elementId) && ((InjectionSetpoint) action).getSetpoint() == setpoint);
+            .filter(GeneratorAction.class::isInstance)
+            .map(GeneratorAction.class::cast)
+            .anyMatch(action -> action.getGeneratorId().equals(elementId) && action.getActivePowerValue().getAsDouble() == activePowerValue);
     }
 
-    private boolean hasTopologicalAction(Set<ElementaryAction> elementaryActions, String elementId, ActionType actionType) {
+    private boolean hasSwitchAction(Set<Action> elementaryActions, String elementId, ActionType actionType) {
         return elementaryActions.stream()
-            .filter(TopologicalAction.class::isInstance)
-            .anyMatch(action -> ((TopologicalAction) action).getNetworkElement().getId().equals(elementId) && ((TopologicalAction) action).getActionType().equals(actionType));
+            .filter(SwitchAction.class::isInstance)
+            .map(SwitchAction.class::cast)
+            .anyMatch(action -> action.getSwitchId().equals(elementId) && action.isOpen() == (actionType == ActionType.OPEN));
     }
 
 }
