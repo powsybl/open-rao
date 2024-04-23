@@ -78,12 +78,12 @@ class JsonVoltageMonitoringResultTest {
         preventiveState = crac.getPreventiveState();
         crac.newNetworkAction()
                 .withId("na1")
-                .newInjectionSetPoint().withNetworkElement("ne1").withSetpoint(50.).withUnit(Unit.MEGAWATT).add()
+                .newGeneratorAction().withNetworkElement("ne1").withActivePowerValue(50.).add()
                 .newOnVoltageConstraintUsageRule().withInstant(PREVENTIVE_INSTANT_ID).withVoltageCnec(vc1.getId()).withUsageMethod(UsageMethod.AVAILABLE).add()
                 .add();
         crac.newNetworkAction()
                 .withId("na2")
-                .newInjectionSetPoint().withNetworkElement("ne2").withSetpoint(150.).withUnit(Unit.MEGAWATT).add()
+                .newDanglingLineAction().withNetworkElement("ne2").withActivePowerValue(150.).add()
                 .newOnVoltageConstraintUsageRule().withInstant(CURATIVE_INSTANT_ID).withVoltageCnec(vc2.getId()).withUsageMethod(UsageMethod.AVAILABLE).add()
                 .add();
         voltageMonitoringResultImporter = new VoltageMonitoringResultImporter();

@@ -8,7 +8,7 @@ package com.powsybl.openrao.data.craccreation.creator.csaprofile.craccreator.rem
 
 import com.powsybl.action.Action;
 import com.powsybl.action.GeneratorAction;
-import com.powsybl.action.TerminalsConnectionAction;
+import com.powsybl.action.SwitchAction;
 import com.powsybl.openrao.data.cracapi.InstantKind;
 import com.powsybl.openrao.data.cracapi.RemedialAction;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
@@ -51,10 +51,10 @@ class AutoRemedialActionTest {
         OnContingencyStateImpl networkSpsUsageRule = (OnContingencyStateImpl) networkSps.getUsageRules().iterator().next();
         List<Action> elementaryActions = networkSps.getElementaryActions().stream().sorted(Comparator.comparing(Action::toString)).toList();
         GeneratorAction injectionSetpoint = (GeneratorAction) elementaryActions.get(0);
-        TerminalsConnectionAction topologicalAction = (TerminalsConnectionAction) elementaryActions.get(1);
+        SwitchAction topologicalAction = (SwitchAction) elementaryActions.get(1);
         assertEquals("Network SPS", networkSps.getName());
         assertEquals(2, elementaryActions.size());
-        assertEquals("BBE1AA1  BBE4AA1  1", topologicalAction.getElementId());
+        assertEquals("BBE1AA1  BBE4AA1  1", topologicalAction.getSwitchId());
         assertTrue(topologicalAction.isOpen());
         assertEquals("FFR1AA1 _generator", injectionSetpoint.getGeneratorId());
         assertEquals(75.0, injectionSetpoint.getActivePowerValue().getAsDouble());

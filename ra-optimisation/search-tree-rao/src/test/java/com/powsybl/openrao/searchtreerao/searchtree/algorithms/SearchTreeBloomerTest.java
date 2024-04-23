@@ -6,6 +6,8 @@
  */
 package com.powsybl.openrao.searchtreerao.searchtree.algorithms;
 
+import com.powsybl.iidm.network.Country;
+import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.commons.CountryBoundary;
 import com.powsybl.openrao.commons.CountryGraph;
 import com.powsybl.openrao.commons.Unit;
@@ -14,15 +16,13 @@ import com.powsybl.openrao.data.cracapi.State;
 import com.powsybl.openrao.data.cracapi.cnec.Side;
 import com.powsybl.openrao.data.cracapi.networkaction.ActionType;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
+import com.powsybl.openrao.data.cracapi.range.RangeType;
 import com.powsybl.openrao.data.cracapi.rangeaction.PstRangeAction;
 import com.powsybl.openrao.data.cracapi.rangeaction.RangeAction;
-import com.powsybl.openrao.data.cracapi.range.RangeType;
 import com.powsybl.openrao.data.cracapi.usagerule.UsageMethod;
 import com.powsybl.openrao.data.cracimpl.utils.CommonCracCreation;
 import com.powsybl.openrao.data.cracimpl.utils.NetworkImportsUtil;
 import com.powsybl.openrao.searchtreerao.commons.NetworkActionCombination;
-import com.powsybl.iidm.network.Country;
-import com.powsybl.iidm.network.Network;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,7 +30,6 @@ import org.mockito.Mockito;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -427,7 +426,7 @@ class SearchTreeBloomerTest {
 
     @Test
     void testIsNetworkActionCloseToLocations() {
-        NetworkAction na1 = crac.newNetworkAction().withId("na").newTopologicalAction().withNetworkElement("BBE2AA1  FFR3AA1  1").withActionType(ActionType.OPEN).add().newOnInstantUsageRule().withUsageMethod(UsageMethod.AVAILABLE).withInstant(PREVENTIVE_INSTANT_ID).add().add();
+        NetworkAction na1 = crac.newNetworkAction().withId("na").newTerminalsConnectionAction().withNetworkElement("BBE2AA1  FFR3AA1  1").withActionType(ActionType.OPEN).add().newOnInstantUsageRule().withUsageMethod(UsageMethod.AVAILABLE).withInstant(PREVENTIVE_INSTANT_ID).add().add();
         NetworkAction na2 = mock(NetworkAction.class);
         Mockito.when(na2.getLocation(network)).thenReturn(Set.of(Optional.of(Country.FR), Optional.empty()));
 
@@ -490,7 +489,7 @@ class SearchTreeBloomerTest {
     }
 
     private NetworkAction createNetworkActionWithOperator(String networkElementId, String operator) {
-        return crac.newNetworkAction().withId("na - " + networkElementId).withOperator(operator).newTopologicalAction().withNetworkElement(networkElementId).withActionType(ActionType.OPEN).add().add();
+        return crac.newNetworkAction().withId("na - " + networkElementId).withOperator(operator).newTerminalsConnectionAction().withNetworkElement(networkElementId).withActionType(ActionType.OPEN).add().add();
     }
 
     private PstRangeAction createPstRangeActionWithOperator(String networkElementId, String operator) {

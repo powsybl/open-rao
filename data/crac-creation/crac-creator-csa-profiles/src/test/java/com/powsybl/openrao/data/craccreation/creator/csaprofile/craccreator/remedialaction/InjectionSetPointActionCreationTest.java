@@ -24,7 +24,6 @@ class InjectionSetPointActionCreationTest {
     void importRotatingMachineActions() {
         CsaProfileCracCreationContext cracCreationContext = getCsaCracCreationContext("/profiles/remedialactions/RotatingMachineActions.zip", NETWORK);
 
-        NETWORK.getIdentifiables();
         List<NetworkAction> importedInjectionSetpointActions = cracCreationContext.getCrac().getNetworkActions().stream().sorted(Comparator.comparing(NetworkAction::getId)).toList();
         assertEquals(5, importedInjectionSetpointActions.size());
 
@@ -41,7 +40,7 @@ class InjectionSetPointActionCreationTest {
         assertHasOnInstantUsageRule(cracCreationContext, "remedial-action-4", PREVENTIVE_INSTANT_ID, UsageMethod.AVAILABLE);
 
         assertSimpleLoadActionImported(importedInjectionSetpointActions.get(4), "remedial-action-5", "RTE_RA5", "FFR1AA1 _load", 900d, "RTE");
-        assertHasOnInstantUsageRule(cracCreationContext, "remedial-action-4", PREVENTIVE_INSTANT_ID, UsageMethod.AVAILABLE);
+        assertHasOnInstantUsageRule(cracCreationContext, "remedial-action-5", PREVENTIVE_INSTANT_ID, UsageMethod.AVAILABLE);
 
         assertEquals(10, cracCreationContext.getRemedialActionCreationContexts().stream().filter(context -> !context.isImported()).toList().size());
 
