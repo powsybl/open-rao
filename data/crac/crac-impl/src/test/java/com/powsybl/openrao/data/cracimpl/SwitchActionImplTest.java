@@ -7,11 +7,12 @@
 
 package com.powsybl.openrao.data.cracimpl;
 
+import com.powsybl.commons.PowsyblException;
+import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.ActionType;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
 import com.powsybl.openrao.data.cracimpl.utils.NetworkImportsUtil;
-import com.powsybl.iidm.network.Network;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Joris Mancini {@literal <joris.mancini at rte-france.com>}
  */
-class TopologicalActionImplTest {
-    // separate in 2 types
+class SwitchActionImplTest {
     private NetworkAction topologyOpen;
     private NetworkAction topologyClose;
 
@@ -31,14 +31,14 @@ class TopologicalActionImplTest {
         Crac crac = new CracImplFactory().create("cracId");
         topologyOpen = crac.newNetworkAction()
             .withId("topologyOpen")
-            .newTerminalsConnectionAction()
+            .newSwitchAction()
                 .withNetworkElement("FFR2AA1  DDE3AA1  1")
                 .withActionType(ActionType.OPEN)
                 .add()
             .add();
         topologyClose = crac.newNetworkAction()
             .withId("topologyClose")
-            .newTerminalsConnectionAction()
+            .newSwitchAction()
                 .withNetworkElement("FFR2AA1  DDE3AA1  1")
                 .withActionType(ActionType.CLOSE)
                 .add()
@@ -50,29 +50,6 @@ class TopologicalActionImplTest {
         assertEquals(1, topologyOpen.getNetworkElements().size());
         assertEquals("FFR2AA1  DDE3AA1  1", topologyOpen.getNetworkElements().iterator().next().getId());
         assertTrue(topologyOpen.canBeApplied(Mockito.mock(Network.class)));
-    }
-
-    @Test
-    void hasImpactOnNetworkForLine() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
-
-        assertTrue(topologyOpen.hasImpactOnNetwork(network));
-        assertFalse(topologyClose.hasImpactOnNetwork(network));
-    }
-
-    @Test
-    void applyOpenCloseLine() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
-        assertTrue(network.getBranch("FFR2AA1  DDE3AA1  1").getTerminal1().isConnected());
-        assertTrue(network.getBranch("FFR2AA1  DDE3AA1  1").getTerminal2().isConnected());
-
-        topologyOpen.apply(network);
-        assertFalse(network.getBranch("FFR2AA1  DDE3AA1  1").getTerminal1().isConnected());
-        assertFalse(network.getBranch("FFR2AA1  DDE3AA1  1").getTerminal2().isConnected());
-
-        topologyClose.apply(network);
-        assertTrue(network.getBranch("FFR2AA1  DDE3AA1  1").getTerminal1().isConnected());
-        assertTrue(network.getBranch("FFR2AA1  DDE3AA1  1").getTerminal2().isConnected());
     }
 
     @Test
@@ -137,14 +114,13 @@ class TopologicalActionImplTest {
         Crac crac = new CracImplFactory().create("cracId");
         NetworkAction topologyOnNode = crac.newNetworkAction()
             .withId("topologyOnNode")
-            .newTerminalsConnectionAction()
+            .newSwitchAction()
             .withNetworkElement("FFR2AA1")
             .withActionType(ActionType.OPEN)
             .add()
             .add();
-
-        NullPointerException e = assertThrows(NullPointerException.class, () -> topologyOnNode.apply(network));
-        assertEquals("Cannot invoke \"com.powsybl.iidm.network.Connectable.getTerminals()\" because \"connectable\" is null", e.getMessage());  // TODO: not very clear message
+        PowsyblException e = assertThrows(PowsyblException.class, () -> topologyOnNode.apply(network));
+        assertEquals("Switch 'FFR2AA1' not found", e.getMessage()); // TODO: not very explicit message
     }
 
     @Test
@@ -152,7 +128,7 @@ class TopologicalActionImplTest {
         Crac crac = new CracImplFactory().create("cracId");
         NetworkAction similarTopologyClose = crac.newNetworkAction()
             .withId("topologyClose")
-            .newTerminalsConnectionAction()
+            .newSwitchAction()
             .withNetworkElement("FFR2AA1  DDE3AA1  1")
             .withActionType(ActionType.CLOSE)
             .add()

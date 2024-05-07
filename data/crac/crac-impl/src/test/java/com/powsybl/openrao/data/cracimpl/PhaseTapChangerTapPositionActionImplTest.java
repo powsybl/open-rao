@@ -14,8 +14,8 @@ import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
 import com.powsybl.openrao.data.cracimpl.utils.NetworkImportsUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Joris Mancini {@literal <joris.mancini at rte-france.com>}
  */
-class PstSetpointImplTest {
+class PhaseTapChangerTapPositionActionImplTest {
+
+    private Network network;
+
+    @BeforeEach
+    public void setUp() {
+        network = NetworkImportsUtil.import12NodesNetwork();
+    }
 
     @Test
     void basicMethods() {
@@ -40,7 +47,7 @@ class PstSetpointImplTest {
             .add();
         assertEquals(1, pstSetpoint.getNetworkElements().size());
         assertEquals("BBE2AA1  BBE3AA1  1", pstSetpoint.getNetworkElements().iterator().next().getId());
-        assertTrue(pstSetpoint.canBeApplied(Mockito.mock(Network.class)));
+        assertTrue(pstSetpoint.canBeApplied(network));
     }
 
     @Test
@@ -53,7 +60,6 @@ class PstSetpointImplTest {
             .withNormalizedSetpoint(-9)
             .add()
             .add();
-        Network network = NetworkImportsUtil.import12NodesNetwork();
         assertTrue(pstSetpoint.hasImpactOnNetwork(network));
     }
 
@@ -67,14 +73,12 @@ class PstSetpointImplTest {
             .withNormalizedSetpoint(0)
             .add()
             .add();
-        Network network = NetworkImportsUtil.import12NodesNetwork();
         assertFalse(pstSetpoint.hasImpactOnNetwork(network));
 
     }
 
     @Test
     void applyCenteredOnZero() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
         Crac crac = new CracImplFactory().create("cracId");
         NetworkAction pstSetpoint = crac.newNetworkAction()
             .withId("pstSetpoint")
@@ -90,7 +94,6 @@ class PstSetpointImplTest {
 
     @Test
     void applyOutOfBoundStartsAtOne() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
         Crac crac = new CracImplFactory().create("cracId");
         NetworkAction pstSetpoint = crac.newNetworkAction()
             .withId("pstSetpoint")
@@ -109,7 +112,6 @@ class PstSetpointImplTest {
 
     @Test
     void applyOutOfBoundCenteredOnZero() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
         Crac crac = new CracImplFactory().create("cracId");
         NetworkAction pstSetpoint = crac.newNetworkAction()
             .withId("pstSetpoint")

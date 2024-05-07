@@ -18,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
  */
-class TopologicalActionAdderImplTest {
-    //TODO separate in 2 types
+class TerminalsConnectionActionAdderImplTest {
 
     private Crac crac;
     private NetworkActionAdder networkActionAdder;
@@ -41,9 +40,9 @@ class TopologicalActionAdderImplTest {
             .add()
             .add();
 
-        TerminalsConnectionAction topologicalAction = (TerminalsConnectionAction) networkAction.getElementaryActions().iterator().next();
-        assertEquals("branchNetworkElementId", topologicalAction.getElementId());
-        assertTrue(topologicalAction.isOpen());
+        TerminalsConnectionAction terminalsConnectionAction = (TerminalsConnectionAction) networkAction.getElementaryActions().iterator().next();
+        assertEquals("branchNetworkElementId", terminalsConnectionAction.getElementId());
+        assertTrue(terminalsConnectionAction.isOpen());
 
         // check that network element has been added in CracImpl
         assertEquals(1, ((CracImpl) crac).getNetworkElements().size());
@@ -52,15 +51,15 @@ class TopologicalActionAdderImplTest {
 
     @Test
     void testNoNetworkElement() {
-        TerminalsConnectionActionAdder topologicalActionAdder = networkActionAdder.newTerminalsConnectionAction()
+        TerminalsConnectionActionAdder terminalsConnectionActionAdder = networkActionAdder.newTerminalsConnectionAction()
             .withActionType(ActionType.OPEN);
-        assertThrows(OpenRaoException.class, topologicalActionAdder::add);
+        assertThrows(OpenRaoException.class, terminalsConnectionActionAdder::add);
     }
 
     @Test
     void testNoActionType() {
-        TerminalsConnectionActionAdder topologicalActionAdder = networkActionAdder.newTerminalsConnectionAction()
+        TerminalsConnectionActionAdder terminalsConnectionActionAdder = networkActionAdder.newTerminalsConnectionAction()
             .withNetworkElement("branchNetworkElementId");
-        assertThrows(OpenRaoException.class, topologicalActionAdder::add);
+        assertThrows(OpenRaoException.class, terminalsConnectionActionAdder::add);
     }
 }

@@ -6,7 +6,7 @@
  */
 package com.powsybl.openrao.data.cracimpl;
 
-import com.powsybl.action.LoadAction;
+import com.powsybl.action.DanglingLineAction;
 import com.powsybl.openrao.commons.OpenRaoException;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.*;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
  */
-class InjectionSetpointAdderImplTest {
+class DanglingLineActionAdderImplTest {
 
     private Crac crac;
     private NetworkActionAdder networkActionAdder;
@@ -34,15 +34,15 @@ class InjectionSetpointAdderImplTest {
 
     @Test
     void testOk() {
-        NetworkAction networkAction = networkActionAdder.newLoadAction()
+        NetworkAction networkAction = networkActionAdder.newDanglingLineAction()
             .withNetworkElement("groupNetworkElementId")
             .withActivePowerValue(100.)
             .add()
             .add();
 
-        LoadAction loadAction = (LoadAction) networkAction.getElementaryActions().iterator().next();
-        assertEquals("groupNetworkElementId", loadAction.getLoadId());
-        assertEquals(100., loadAction.getActivePowerValue().getAsDouble(), 1e-3);
+        DanglingLineAction danglingLineAction = (DanglingLineAction) networkAction.getElementaryActions().iterator().next();
+        assertEquals("groupNetworkElementId", danglingLineAction.getDanglingLineId());
+        assertEquals(100., danglingLineAction.getActivePowerValue().getAsDouble(), 1e-3);
 
         // check that network element have been added to CracImpl
         assertEquals(1, ((CracImpl) crac).getNetworkElements().size());
@@ -59,18 +59,10 @@ class InjectionSetpointAdderImplTest {
 
     @Test
     void testNoSetpoint() {
-        GeneratorActionAdder generatorActionAdder = networkActionAdder.newGeneratorAction()
+        DanglingLineActionAdder danglingLineActionAdder = networkActionAdder.newDanglingLineAction()
             .withNetworkElement("groupNetworkElementId");
-        Exception e = assertThrows(OpenRaoException.class, generatorActionAdder::add);
-        assertEquals("Cannot add GeneratorAction without a activePowerValue. Please use withActivePowerValue() with a non null value", e.getMessage());
-    }
-
-    @Test
-    void testNegativeSetPointWithSectionCount() {
-        ShuntCompensatorPositionActionAdder shuntCompensatorPositionActionAdder = networkActionAdder.newShuntCompensatorPositionAction()
-                .withNetworkElement("groupNetworkElementId").withSectionCount(-100);
-        Exception e = assertThrows(OpenRaoException.class, shuntCompensatorPositionActionAdder::add);
-        assertEquals("Section count should be a positive integer", e.getMessage());
+        Exception e = assertThrows(OpenRaoException.class, danglingLineActionAdder::add);
+        assertEquals("Cannot add DanglingLineAction without a activePowerValue. Please use withActivePowerValue() with a non null value", e.getMessage());
     }
 
 }
