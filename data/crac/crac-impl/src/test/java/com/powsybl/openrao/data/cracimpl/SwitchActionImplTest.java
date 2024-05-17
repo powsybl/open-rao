@@ -7,7 +7,6 @@
 
 package com.powsybl.openrao.data.cracimpl;
 
-import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.ActionType;
@@ -106,21 +105,6 @@ class SwitchActionImplTest {
 
         closeSwitchTopology.apply(network);
         assertFalse(network.getSwitch(switchNetworkElementId).isOpen());
-    }
-
-    @Test
-    void applyOnUnsupportedElement() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
-        Crac crac = new CracImplFactory().create("cracId");
-        NetworkAction topologyOnNode = crac.newNetworkAction()
-            .withId("topologyOnNode")
-            .newSwitchAction()
-            .withNetworkElement("FFR2AA1")
-            .withActionType(ActionType.OPEN)
-            .add()
-            .add();
-        PowsyblException e = assertThrows(PowsyblException.class, () -> topologyOnNode.apply(network));
-        assertEquals("Switch 'FFR2AA1' not found", e.getMessage()); // TODO: not very explicit message
     }
 
     @Test

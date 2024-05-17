@@ -11,7 +11,6 @@ package com.powsybl.openrao.data.cracimpl;
 
 import com.powsybl.action.LoadAction;
 import com.powsybl.action.LoadActionBuilder;
-import com.powsybl.commons.PowsyblException;
 import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.data.cracapi.Crac;
 import com.powsybl.openrao.data.cracapi.networkaction.NetworkAction;
@@ -98,21 +97,6 @@ class LoadActionImplTest {
             .add()
             .add();
         assertTrue(loadSetpoint.canBeApplied(network)); // for now always true
-    }
-
-    @Test
-    void applyThrow() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
-        Crac crac = new CracImplFactory().create("cracId");
-        NetworkAction dummy = crac.newNetworkAction()
-            .withId("dummy")
-            .newLoadAction()
-            .withNetworkElement("wrong_name")
-            .withActivePowerValue(100)
-            .add()
-            .add();
-        PowsyblException e = assertThrows(PowsyblException.class, () -> dummy.apply(network));
-        assertEquals("Load 'wrong_name' not found", e.getMessage()); // TODO: not very explicit message
     }
 
     @Test

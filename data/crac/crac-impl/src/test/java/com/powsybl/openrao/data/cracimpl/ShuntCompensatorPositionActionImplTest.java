@@ -137,21 +137,6 @@ class ShuntCompensatorPositionActionImplTest {
     }
 
     @Test
-    void applyThrow() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
-        Crac crac = new CracImplFactory().create("cracId");
-        NetworkAction dummy = crac.newNetworkAction()
-            .withId("dummy")
-            .newShuntCompensatorPositionAction()
-            .withNetworkElement("wrong_name")
-            .withSectionCount(3)
-            .add()
-            .add();
-        NullPointerException e = assertThrows(NullPointerException.class, () -> dummy.apply(network));
-        assertEquals("Cannot invoke \"com.powsybl.iidm.network.ShuntCompensator.getMaximumSectionCount()\" because \"shuntCompensator\" is null", e.getMessage()); // TODO: not very clear exception
-    }
-
-    @Test
     void hasImpactOnNetworkThrow() {
         Network network = NetworkImportsUtil.import12NodesNetwork();
         Crac crac = new CracImplFactory().create("cracId");

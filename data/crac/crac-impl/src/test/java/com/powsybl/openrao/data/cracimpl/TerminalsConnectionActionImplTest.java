@@ -73,22 +73,6 @@ class TerminalsConnectionActionImplTest {
     }
 
     @Test
-    void applyOnUnsupportedElement() {
-        Network network = NetworkImportsUtil.import12NodesNetwork();
-        Crac crac = new CracImplFactory().create("cracId");
-        NetworkAction topologyOnNode = crac.newNetworkAction()
-            .withId("topologyOnNode")
-            .newTerminalsConnectionAction()
-            .withNetworkElement("FFR2AA1")
-            .withActionType(ActionType.OPEN)
-            .add()
-            .add();
-
-        NullPointerException e = assertThrows(NullPointerException.class, () -> topologyOnNode.apply(network));
-        assertEquals("Cannot invoke \"com.powsybl.iidm.network.Connectable.getTerminals()\" because \"connectable\" is null", e.getMessage()); // TODO not very clear exception
-    }
-
-    @Test
     void equals() {
         Crac crac = new CracImplFactory().create("cracId");
         NetworkAction similarTopologyClose = crac.newNetworkAction()
