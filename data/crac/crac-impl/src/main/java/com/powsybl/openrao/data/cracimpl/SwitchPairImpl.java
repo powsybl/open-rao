@@ -9,6 +9,7 @@ package com.powsybl.openrao.data.cracimpl;
 
 import com.powsybl.action.SwitchActionBuilder;
 import com.powsybl.iidm.modification.NetworkModification;
+import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.data.cracapi.NetworkElement;
 import com.powsybl.openrao.data.cracapi.networkaction.SwitchPair;
 import com.powsybl.iidm.modification.NetworkModificationList;
@@ -43,6 +44,12 @@ public class SwitchPairImpl implements SwitchPair {
             .build()
             .toModification()
         );
+    }
+
+    @Override
+    public boolean canBeApplied(Network network) {
+        // It is only applicable if, initially, one switch was closed and the other was open.
+        return network.getSwitch(getSwitchToOpen().getId()).isOpen() != network.getSwitch(getSwitchToClose().getId()).isOpen();
     }
 
     @Override

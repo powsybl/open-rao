@@ -8,6 +8,7 @@
 package com.powsybl.openrao.data.cracapi.networkaction;
 
 import com.powsybl.action.Action;
+import com.powsybl.iidm.network.Network;
 import com.powsybl.openrao.data.cracapi.NetworkElement;
 
 /***
@@ -26,4 +27,10 @@ public interface SwitchPair extends Action {
      * Get the switch that should be closed by the elementary action
      */
     NetworkElement getSwitchToClose();
+
+    /**
+     * Returns true if the elementary action can be applied to the given network
+     */
+    boolean canBeApplied(Network network);
+
 }

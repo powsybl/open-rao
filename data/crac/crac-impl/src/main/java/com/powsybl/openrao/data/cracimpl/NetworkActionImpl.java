@@ -9,13 +9,17 @@ package com.powsybl.openrao.data.cracimpl;
 
 import com.powsybl.action.*;
 import com.powsybl.commons.report.ReportNode;
+import com.powsybl.iidm.modification.NetworkModificationList;
 import com.powsybl.iidm.network.*;
 import com.powsybl.openrao.data.cracapi.networkaction.*;
 import com.powsybl.openrao.data.cracapi.NetworkElement;
 import com.powsybl.openrao.data.cracapi.usagerule.UsageRule;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -90,28 +94,28 @@ public class NetworkActionImpl extends AbstractRemedialAction<NetworkAction> imp
         }
     }
 
+    public static String normalizeLineSeparator(String str) {
+        return Objects.requireNonNull(str).replace("\r\n", "\n")
+            .replace("\r", "\n");
+    }
+
     @Override
     public boolean canBeApplied(Network network) {
-        // TODO: To implement on powsybl-core Action
-        return elementaryActions.stream().allMatch(elementaryAction -> {
-            if (elementaryAction instanceof ShuntCompensatorPositionAction shuntCompensatorPositionAction) {
-                ShuntCompensator shuntCompensator = network.getShuntCompensator(shuntCompensatorPositionAction.getShuntCompensatorId());
-                return shuntCompensatorPositionAction.getSectionCount() <= shuntCompensator.getMaximumSectionCount();
-            } else if (elementaryAction instanceof GeneratorAction || elementaryAction instanceof LoadAction || elementaryAction instanceof DanglingLineAction) {
-                return true;
-            } else if (elementaryAction instanceof PhaseTapChangerTapPositionAction) {
-                // TODO : setpoint out of range ?
-                return true;
-            } else if (elementaryAction instanceof SwitchPair switchPair) {
-                // It is only applicable if, initially, one switch was closed and the other was open.
-                return network.getSwitch(switchPair.getSwitchToOpen().getId()).isOpen() != network.getSwitch(switchPair.getSwitchToClose().getId()).isOpen();
-            } else if (elementaryAction instanceof TerminalsConnectionAction || elementaryAction instanceof SwitchAction) {
-                // TODO : always true ?
-                return true;
-            } else {
-                throw new NotImplementedException();
-            }
-        });
+        boolean switchPairsCanBeApplied = elementaryActions.stream().filter(SwitchPair.class::isInstance).map(SwitchPair.class::cast).allMatch(sp -> sp.canBeApplied(network));
+        if (!switchPairsCanBeApplied) {
+            return false;
+        }
+        NetworkModificationList modifications = new NetworkModificationList(elementaryActions.stream().map(Action::toModification).toList());
+        ReportNode reportNode = ReportNode.newRootReportNode().withMessageTemplate("test", "test reportNode").build();
+        boolean othersCanBeApplied = modifications.fullDryRun(network, reportNode);
+        try {
+            StringWriter sw1 = new StringWriter();
+            reportNode.print(sw1);
+            normalizeLineSeparator(sw1.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return othersCanBeApplied;
     }
 
     @Override
