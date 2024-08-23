@@ -98,6 +98,10 @@ public final class PstRangeActionArrayDeserializer {
                         jsonParser.nextToken();
                         pstRangeActionAdder.withSpeed(jsonParser.getIntValue());
                         break;
+                    case COST:
+                        jsonParser.nextToken();
+                        pstRangeActionAdder.withActivationCost(jsonParser.getDoubleValue());
+                        break;
                     default:
                         throw new OpenRaoException("Unexpected field in PstRangeAction: " + jsonParser.getCurrentName());
                 }
