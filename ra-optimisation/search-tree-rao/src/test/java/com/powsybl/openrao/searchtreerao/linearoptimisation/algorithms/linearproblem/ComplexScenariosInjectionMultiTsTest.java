@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, RTE (http://www.rte-france.com)
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package com.powsybl.openrao.searchtreerao.linearoptimisation.algorithms.linearproblem;
 
 import com.powsybl.iidm.network.Network;
@@ -34,7 +41,10 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
-public class ComplexScenariosInjectionMultiTs {
+/**
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
+ */
+public class ComplexScenariosInjectionMultiTsTest {
     List<Network> networks;
     List<Crac> cracs;
     RangeActionSetpointResult initialSetpoints;
@@ -226,12 +236,12 @@ public class ComplexScenariosInjectionMultiTs {
 
         ObjectiveFunction objectiveFunction = ObjectiveFunction.create().build(
             allCnecs,
-            Collections.emptySet(), // loopflows
+            Collections.emptySet(),
             initialSensiResult,
             initialSensiResult,
             initialSetpoints,
-            null, //crac(s), not useful (CNECs secured by PST)
-            Collections.emptySet(), // operators not sharing CRAs
+            null,
+            Collections.emptySet(),
             raoParameters);
 
         ToolProvider toolProvider = ToolProvider.create().withNetwork(networks.get(0)).withRaoParameters(raoParameters).build(); //the attributes in the class are only used for loopflow things

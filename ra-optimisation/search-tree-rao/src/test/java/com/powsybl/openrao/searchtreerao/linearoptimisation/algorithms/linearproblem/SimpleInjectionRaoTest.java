@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2020, RTE (http://www.rte-france.com)
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package com.powsybl.openrao.searchtreerao.linearoptimisation.algorithms.linearproblem;
 
 import com.powsybl.iidm.network.Network;
@@ -12,8 +19,10 @@ import com.powsybl.openrao.raoapi.parameters.RaoParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
+ */
 public class SimpleInjectionRaoTest {
-
     private static final String PREVENTIVE_INSTANT_ID = "preventive";
     Network network;
     Crac crac;
@@ -73,6 +82,31 @@ public class SimpleInjectionRaoTest {
         crac = CracImporters.importCrac("crac/small-crac-injection-multiple.json",
             getClass().getResourceAsStream("/crac/small-crac-injection-multiple.json"),
             network);
+
+        RaoInput raoInput = RaoInput.build(network, crac).build();
+        RaoResult raoResult = Rao.find("SearchTreeRao").run(raoInput, raoParameters);
+    }
+
+    @Test
+    public void testRunRaoInjection3() {
+        crac = CracImporters.importCrac("crac/small-crac-no-range-action.json",
+            getClass().getResourceAsStream("/crac/small-crac-no-range-action.json"),
+            network);
+
+        crac.newInjectionRangeAction()
+            .withId("injectionRangeActionId")
+            .withNetworkElementAndKey(1., "BBE1AA1 _generator")
+            .withNetworkElementAndKey(1., "BBE2AA1 _generator")
+            .newRange().withMin(300).withMax(1000).add()
+            .newOnInstantUsageRule().withInstant(PREVENTIVE_INSTANT_ID).withUsageMethod(UsageMethod.AVAILABLE).add()
+            .add();
+
+        crac.newInjectionRangeAction()
+            .withId("injectionRangeActionId1")
+            .withNetworkElementAndKey(1., "DDE1AA1 _load")
+            .newRange().withMin(-1000).withMax(-100).add()
+            .newOnInstantUsageRule().withInstant(PREVENTIVE_INSTANT_ID).withUsageMethod(UsageMethod.AVAILABLE).add()
+            .add();
 
         RaoInput raoInput = RaoInput.build(network, crac).build();
         RaoResult raoResult = Rao.find("SearchTreeRao").run(raoInput, raoParameters);

@@ -33,6 +33,9 @@ import java.util.*;
 
 import static com.powsybl.openrao.commons.logs.OpenRaoLoggerProvider.*;
 
+/**
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
+ */
 public final class IteratingLinearOptimizerMultiTS {
 
     private IteratingLinearOptimizerMultiTS() {
@@ -56,7 +59,7 @@ public final class IteratingLinearOptimizerMultiTS {
             .buildFromInputsAndParameters(input, parameters);
 
         linearProblem.fill(input.getPreOptimizationFlowResult(), input.getPreOptimizationSensitivityResult());
-        logMostLimitedElementsBetweenIteration(input, parameters, TECHNICAL_LOGS, bestResult);
+        logMostLimitingElementsBetweenIteration(input, parameters, TECHNICAL_LOGS, bestResult);
 
         for (int iteration = 1; iteration <= parameters.getMaxNumberOfIterations(); iteration++) {
             LinearProblemStatus solveStatus = solveLinearProblem(linearProblem, iteration);
@@ -98,7 +101,7 @@ public final class IteratingLinearOptimizerMultiTS {
                 input.getObjectiveFunction()
             );
             previousResult = currentResult;
-            logMostLimitedElementsBetweenIteration(input, parameters, TECHNICAL_LOGS, currentResult);
+            logMostLimitingElementsBetweenIteration(input, parameters, TECHNICAL_LOGS, currentResult);
 
             Pair<IteratingLinearOptimizationResultImpl, Boolean> mipShouldStop = updateBestResultAndCheckStopCondition(parameters.getRaRangeShrinking(), linearProblem, input, iteration, currentResult, bestResult);
             if (Boolean.TRUE.equals(mipShouldStop.getRight())) {
@@ -111,9 +114,12 @@ public final class IteratingLinearOptimizerMultiTS {
         return bestResult;
     }
 
-    // Add logs for this class: RaoRunner not called in order to use MIP for multi TS so logs are missing
-    private static void logMostLimitedElementsBetweenIteration(IteratingLinearOptimizerMultiTSInput input, IteratingLinearOptimizerParameters parameters, OpenRaoLogger logger, IteratingLinearOptimizationResultImpl result) {
-        List<FlowCnec> flowCnecsList = input.getOptimizationPerimeters().stream().flatMap(perimeter -> perimeter.getFlowCnecs().stream()).toList();
+    /**
+     * Add logs for this class:
+     * RaoRunner is not called in order to use MIP for multi TS so logs of most limiting elements with their margins are missing
+     */
+    private static void logMostLimitingElementsBetweenIteration(IteratingLinearOptimizerMultiTSInput input, IteratingLinearOptimizerParameters parameters, OpenRaoLogger logger, IteratingLinearOptimizationResultImpl result) {
+        List<FlowCnec> flowCnecsList = getMostLimitingElements(input, 5);
         Unit unit = parameters.getObjectiveFunctionUnit();
         int i = 0;
         for (FlowCnec flowCnec : flowCnecsList) {
@@ -133,6 +139,13 @@ public final class IteratingLinearOptimizerMultiTS {
             });
             i++;
         }
+    }
+
+    private static List<FlowCnec> getMostLimitingElements(IteratingLinearOptimizerMultiTSInput input,
+                                                          int maxNumberOfElements) {
+        List<FlowCnec> cnecs = input.getOptimizationPerimeters().stream().flatMap(perimeter -> perimeter.getFlowCnecs().stream()).toList();
+        cnecs = cnecs.subList(0, Math.min(cnecs.size(), maxNumberOfElements));
+        return cnecs;
     }
 
     private static SensitivityComputerMultiTS runSensitivityAnalysis(SensitivityComputerMultiTS sensitivityComputerMultiTS, int iteration, RangeActionActivationResult currentRangeActionActivationResult, IteratingLinearOptimizerMultiTSInput input, IteratingLinearOptimizerParameters parameters) {
@@ -218,7 +231,7 @@ public final class IteratingLinearOptimizerMultiTS {
     }
 
     private static SensitivityComputerMultiTS createSensitivityComputer(AppliedRemedialActions appliedRemedialActions, IteratingLinearOptimizerMultiTSInput input, IteratingLinearOptimizerParameters parameters) {
-        //TODO : adapt sensitivity computer
+
         List<Set<FlowCnec>> cnecsList = new ArrayList<>();
         List<Set<FlowCnec>> loopFlowCnecsList = new ArrayList<>();
         Set<RangeAction<?>> rangeActions = new HashSet<>();

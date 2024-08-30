@@ -23,6 +23,9 @@ import com.powsybl.openrao.sensitivityanalysis.SystematicSensitivityResult;
 
 import java.util.*;
 
+/**
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
+ */
 public final class SensitivityComputerMultiTS {
     private List<SystematicSensitivityInterface> systematicSensitivityInterfaces;
     private List<BranchResultAdapter> branchResultAdapters;
@@ -38,14 +41,14 @@ public final class SensitivityComputerMultiTS {
     }
 
     public void compute(List<Network> networks) {
-        results = new ArrayList<>(); //besoin d'initialiser?
+        results = new ArrayList<>();
         for (int i = 0; i < networks.size(); i++) {
             results.add(systematicSensitivityInterfaces.get(i).run(networks.get(i)));
         }
     }
 
     public FlowResult getBranchResult(Network network, int i) {
-        return branchResultAdapters.get(i).getResult(results.get(i), network); //???
+        return branchResultAdapters.get(i).getResult(results.get(i), network);
     }
 
     public MultipleSensitivityResult getSensitivityResults() {
@@ -66,7 +69,8 @@ public final class SensitivityComputerMultiTS {
         private LoopFlowComputation loopFlowComputation;
         private List<Set<FlowCnec>> loopFlowCnecsList;
         private AppliedRemedialActions appliedRemedialActions;
-        private Instant outageInstant; //list of outage instants?
+        private Instant outageInstant;
+        // curently using only one outageInstant, but we could use a List ot make it cleaner
 
         public SensitivityComputerBuilder withToolProvider(ToolProvider toolProvider) {
             this.toolProvider = toolProvider;

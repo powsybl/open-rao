@@ -43,22 +43,16 @@ import java.util.concurrent.CompletableFuture;
 import static com.powsybl.openrao.commons.logs.OpenRaoLoggerProvider.BUSINESS_LOGS;
 
 /**
- * @author Joris Mancini {@literal <joris.mancini at rte-france.com>}
- * @author Philippe Edwards {@literal <philippe.edwards at rte-france.com>}
- * @author Peter Mitri {@literal <peter.mitri at rte-france.com>}
- * @author Godelaine De-Montmorillon {@literal <godelaine.demontmorillon at rte-france.com>}
- * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
  */
 @AutoService(RaoProvider.class)
 public class TimeStepsRao implements RaoProvider {
     private static final String TIMESTEPS_RAO = "TimeStepsRao";
 
-    //return RaoResult
     public static LinearOptimizationResult launchMultiRao(List<RaoInput> raoInputsList, RaoParameters parameters) {
         List<Set<NetworkAction>> networkActionsToApply = new ArrayList<>();
         raoInputsList.forEach(raoInput -> {
             RaoResult result = Rao.find("SearchTreeRao").run(raoInput, parameters);
-
             networkActionsToApply.add(result.getActivatedNetworkActionsDuringState(raoInput.getCrac().getPreventiveState()));
         });
 
@@ -67,7 +61,7 @@ public class TimeStepsRao implements RaoProvider {
         for (int i = 0; i < raoInputsList.size(); i++) {
             int finalI = i;
             networkActionsToApply.get(i).forEach(networkAction ->
-                // TODO : que faire pour le curatif ?
+                // curative state not supported
                 networkAction.apply(raoInputsList.get(finalI).getNetwork())
             );
         }
@@ -75,7 +69,6 @@ public class TimeStepsRao implements RaoProvider {
     }
 
     public static LinearOptimizationResult runIteratingLinearOptimization(List<RaoInput> raoInputsList, RaoParameters raoParameters) {
-
         List<Crac> cracs = new ArrayList<>();
         List<Network> networks = new ArrayList<>();
         Set<FlowCnec> allCnecs = new HashSet<>();
@@ -156,12 +149,6 @@ public class TimeStepsRao implements RaoProvider {
         }
         return perimeters;
     }
-
-    //How to manage multiple inputs????
-    //    public CompletableFuture<RaoResult> run(List<RaoInput> raoInputsList, RaoParameters parameters, Instant targetEndInstant) {
-    //        raoInputsList.forEach(raoInput -> RaoUtil.initData(raoInput, parameters));
-    //        return CompletableFuture.completedFuture(launchMultiRao(raoInputsList, parameters, targetEndInstant));
-    //    }
 
     private static MultipleSensitivityResult runInitialSensi(List<Crac> cracs, List<Network> networks) {
         List<Set<FlowCnec>> cnecsList = new ArrayList<>();
