@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
  */
 public class LinearProblemBuilderMultiTS {
 
@@ -40,8 +40,8 @@ public class LinearProblemBuilderMultiTS {
             .withRelativeMipGap(parameters.getSolverParameters().getRelativeMipGap())
             .withSolverSpecificParameters(parameters.getSolverParameters().getSolverSpecificParameters());
 
-        for (OptimizationPerimeter optimizationPerimeter : inputs.getOptimizationPerimeters()) {
-            this.withProblemFiller(buildCoreProblemFiller(inputs, parameters, optimizationPerimeter));
+        for (int timeStepIndex = 0; timeStepIndex < inputs.getOptimizationPerimeters().size(); timeStepIndex++) {
+            this.withProblemFiller(buildCoreProblemFiller(inputs, parameters, timeStepIndex));
         }
 
         // max.min margin, or max.min relative margin
@@ -97,6 +97,11 @@ public class LinearProblemBuilderMultiTS {
             }
         }
 
+        // Add Multi time steps constraints if multiple time steps
+        if (inputs.getNetworks().size() > 1) {
+            this.withProblemFiller(buildMultiTSFiller(inputs, parameters));
+        }
+
         // RA limitation
         for (OptimizationPerimeter optimizationPerimeter : inputs.getOptimizationPerimeters()) {
             if (parameters.getRaLimitationParameters() != null
@@ -136,14 +141,15 @@ public class LinearProblemBuilderMultiTS {
         return new OpenRaoMPSolver(OPT_PROBLEM_NAME, parameters.getSolverParameters().getSolver());
     }
 
-    private ProblemFiller buildCoreProblemFiller(IteratingLinearOptimizerMultiTSInput inputs, IteratingLinearOptimizerParameters parameters, OptimizationPerimeter optimizationPerimeter) {
+    private ProblemFiller buildCoreProblemFiller(IteratingLinearOptimizerMultiTSInput inputs, IteratingLinearOptimizerParameters parameters, int timeStepIndex) {
         return new CoreProblemFiller(
-            optimizationPerimeter,
+            inputs.getOptimizationPerimeters().get(timeStepIndex),
             inputs.getPrePerimeterSetpoints(),
             inputs.getRaActivationFromParentLeaf(),
             parameters.getRangeActionParameters(),
             parameters.getObjectiveFunctionUnit(),
-            parameters.getRaRangeShrinking()
+            parameters.getRaRangeShrinking(),
+            timeStepIndex
         );
     }
 
@@ -201,7 +207,7 @@ public class LinearProblemBuilderMultiTS {
     private ProblemFiller buildIntegerPstTapFiller(IteratingLinearOptimizerMultiTSInput inputs, Map<State, Set<PstRangeAction>> pstRangeActions, int i) {
         return new DiscretePstTapFiller(
             inputs.getNetwork(i),
-            inputs.getOptimizationPerimeter(i).getMainOptimizationState(),
+            inputs.getOptimizationPerimeter(i),
             pstRangeActions,
             inputs.getPrePerimeterSetpoints()
         );
@@ -212,6 +218,15 @@ public class LinearProblemBuilderMultiTS {
             inputs.getNetwork(i),
             inputs.getOptimizationPerimeter(i).getMainOptimizationState(),
             pstRangeActions
+        );
+    }
+
+    private ProblemFiller buildMultiTSFiller(IteratingLinearOptimizerMultiTSInput inputs, IteratingLinearOptimizerParameters parameters) {
+        return new MultiTSFiller(
+            inputs.getOptimizationPerimeters(),
+            inputs.getNetworks(),
+            parameters.getRangeActionParameters(),
+            inputs.getRaActivationFromParentLeaf()
         );
     }
 

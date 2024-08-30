@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import static com.powsybl.openrao.commons.Unit.MEGAWATT;
 
 /**
- * @author Joris Mancini {@literal <joris.mancini at rte-france.com>}
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
  */
 public final class BestTapFinderMultiTS {
 

@@ -20,7 +20,7 @@ import com.powsybl.openrao.sensitivityanalysis.AppliedRemedialActions;
 import java.util.List;
 
 /**
- * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
+ * @author Jeremy Wang {@literal <jeremy.wang at rte-france.com>}
  */
 public class IteratingLinearOptimizerMultiTSInput {
 

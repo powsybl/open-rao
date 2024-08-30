@@ -24,7 +24,6 @@ public final class StandardRangeArrayDeserializer {
     private StandardRangeArrayDeserializer() {
     }
 
-    //a Standard range is implicitly of type "ABSOLUTE" : no RANGE_TYPE
     public static void deserialize(JsonParser jsonParser, StandardRangeActionAdder<?> ownerAdder) throws IOException {
         while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
             StandardRangeAdder<?> adder = ownerAdder.newRange();
@@ -37,6 +36,10 @@ public final class StandardRangeArrayDeserializer {
                     case MAX:
                         jsonParser.nextToken();
                         adder.withMax(jsonParser.getDoubleValue());
+                        break;
+                    case RANGE_TYPE:
+                        jsonParser.nextToken();
+                        adder.withRangeType(deserializeRangeType(jsonParser.getText()));
                         break;
                     default:
                         throw new OpenRaoException("Unexpected field in StandardRange: " + jsonParser.getCurrentName());
