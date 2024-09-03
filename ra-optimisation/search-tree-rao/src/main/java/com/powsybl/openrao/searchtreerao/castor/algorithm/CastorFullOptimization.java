@@ -511,17 +511,11 @@ public class CastorFullOptimization {
         ObjectiveFunctionParameters.CurativeStopCriterion curativeStopCriterion = raoParameters.getObjectiveFunctionParameters().getCurativeStopCriterion();
         switch (curativeStopCriterion) {
             case MIN_OBJECTIVE:
-                // Run 2nd preventive RAO in all cases
-                return true;
+                // Run 2nd preventive RAO if the final result has a worse cost than the preventive perimeter
+                return isFinalCostWorseThanPreventive(raoParameters.getObjectiveFunctionParameters().getCurativeMinObjImprovement(), firstPreventiveResult, postFirstRaoResult, lastCurativeInstant);
             case SECURE:
                 // Run 2nd preventive RAO if one perimeter of the curative optimization is unsecure
                 return isAnyResultUnsecure(curativeRaoResults);
-            case PREVENTIVE_OBJECTIVE:
-                // Run 2nd preventive RAO if the final result has a worse cost than the preventive perimeter
-                return isFinalCostWorseThanPreventive(raoParameters.getObjectiveFunctionParameters().getCurativeMinObjImprovement(), firstPreventiveResult, postFirstRaoResult, lastCurativeInstant);
-            case PREVENTIVE_OBJECTIVE_AND_SECURE:
-                // Run 2nd preventive RAO if the final result has a worse cost than the preventive perimeter or is unsecure
-                return isAnyResultUnsecure(curativeRaoResults) || isFinalCostWorseThanPreventive(raoParameters.getObjectiveFunctionParameters().getCurativeMinObjImprovement(), firstPreventiveResult, postFirstRaoResult, lastCurativeInstant);
             default:
                 throw new OpenRaoException(String.format("Unknown curative RAO stop criterion: %s", curativeStopCriterion));
         }

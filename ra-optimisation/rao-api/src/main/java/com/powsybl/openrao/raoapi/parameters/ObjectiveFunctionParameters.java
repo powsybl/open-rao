@@ -89,7 +89,11 @@ public class ObjectiveFunctionParameters {
     }
 
     public CurativeStopCriterion getCurativeStopCriterion() {
-        return curativeStopCriterion;
+        if (preventiveStopCriterion == PreventiveStopCriterion.MIN_OBJECTIVE) {
+            return CurativeStopCriterion.MIN_OBJECTIVE;
+        } else {
+            return CurativeStopCriterion.SECURE;
+        }
     }
 
     public void setCurativeStopCriterion(CurativeStopCriterion curativeStopCriterion) {
@@ -97,7 +101,18 @@ public class ObjectiveFunctionParameters {
     }
 
     public boolean getOptimizeCurativeIfPreventiveUnsecure() {
-        return optimizeCurativeIfPreventiveUnsecure;
+        if (preventiveStopCriterion == PreventiveStopCriterion.SECURE) {
+            return optimizeCurativeIfPreventiveUnsecure;
+        }
+        return false;
+    }
+
+    public boolean getEnforceCurativeSecurity() {
+        if (preventiveStopCriterion == PreventiveStopCriterion.SECURE) {
+            return optimizeCurativeIfPreventiveUnsecure;
+        } else {
+            return curativeStopCriterion == CurativeStopCriterion.SECURE || curativeStopCriterion == CurativeStopCriterion.PREVENTIVE_OBJECTIVE_AND_SECURE;
+        }
     }
 
     public void setOptimizeCurativeIfPreventiveUnsecure(boolean optimizeCurativeIfPreventiveUnsecure) {

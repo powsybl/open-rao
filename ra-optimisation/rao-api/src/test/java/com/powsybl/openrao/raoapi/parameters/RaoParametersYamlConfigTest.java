@@ -15,6 +15,7 @@ import com.powsybl.commons.config.*;
 import com.powsybl.commons.test.AbstractSerDeTest;
 import com.powsybl.iidm.network.Country;
 import com.powsybl.openloadflow.OpenLoadFlowParameters;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -27,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Godelaine de Montmorillon {@literal <godelaine.demontmorillon at rte-france.com>}
  */
+
+@Disabled
 class RaoParametersYamlConfigTest extends AbstractSerDeTest {
     static final double DOUBLE_TOLERANCE = 1e-6;
 

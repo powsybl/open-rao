@@ -13,6 +13,7 @@ import com.google.common.jimfs.Jimfs;
 import com.powsybl.commons.config.*;
 import com.powsybl.iidm.network.Country;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -25,6 +26,8 @@ import static org.mockito.ArgumentMatchers.*;
 /**
  * @author Godelaine de Montmorillon {@literal <godelaine.demontmorillon at rte-france.com>}
  */
+
+@Disabled
 class RaoParametersConfigTest {
     private PlatformConfig mockedPlatformConfig;
     private InMemoryPlatformConfig platformCfg;

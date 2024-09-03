@@ -64,14 +64,6 @@ public record TreeParameters(StopCriterion stopCriterion, double targetObjective
                 stopCriterion = StopCriterion.AT_TARGET_OBJECTIVE_VALUE;
                 targetObjectiveValue = 0.0;
                 break;
-            case PREVENTIVE_OBJECTIVE:
-                stopCriterion = StopCriterion.AT_TARGET_OBJECTIVE_VALUE;
-                targetObjectiveValue = preventiveOptimizedCost - parameters.getObjectiveFunctionParameters().getCurativeMinObjImprovement();
-                break;
-            case PREVENTIVE_OBJECTIVE_AND_SECURE:
-                stopCriterion = StopCriterion.AT_TARGET_OBJECTIVE_VALUE;
-                targetObjectiveValue = Math.min(preventiveOptimizedCost - parameters.getObjectiveFunctionParameters().getCurativeMinObjImprovement(), 0);
-                break;
             default:
                 throw new OpenRaoException("Unknown curative stop criterion: " + parameters.getObjectiveFunctionParameters().getCurativeStopCriterion());
         }

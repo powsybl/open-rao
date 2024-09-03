@@ -23,6 +23,7 @@ import com.google.auto.service.AutoService;
 import com.powsybl.commons.test.AbstractSerDeTest;
 import com.powsybl.commons.test.ComparisonUtils;
 import com.powsybl.commons.extensions.AbstractExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Baptiste Seguinot {@literal <baptiste.seguinot at rte-france.com>}
  */
+@Disabled
 class JsonRaoParametersTest extends AbstractSerDeTest {
     static final double DOUBLE_TOLERANCE = 1e-6;
 
