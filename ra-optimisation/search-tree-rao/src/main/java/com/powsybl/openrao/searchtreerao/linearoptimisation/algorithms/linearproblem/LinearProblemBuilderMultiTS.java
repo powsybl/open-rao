@@ -47,6 +47,8 @@ public class LinearProblemBuilderMultiTS {
         // max.min margin, or max.min relative margin
         if (parameters.getObjectiveFunction().relativePositiveMargins()) {
             this.withProblemFiller(buildMaxMinRelativeMarginFiller(inputs, parameters));
+        } else if (parameters.getObjectiveFunction().isMinCost()) {
+            this.withProblemFiller(buildMinCostHardFiller(inputs));
         } else {
             this.withProblemFiller(buildMaxMinMarginFiller(inputs, parameters));
         }
@@ -174,6 +176,21 @@ public class LinearProblemBuilderMultiTS {
         return new MaxMinMarginFiller(
             optimizedCnecs,
             parameters.getObjectiveFunctionUnit()
+        );
+    }
+
+    private ProblemFiller buildMinCostHardFiller(IteratingLinearOptimizerMultiTSInput inputs) {
+        Set<FlowCnec> optimizedCnecs = new HashSet<>();
+        Map<State, Set<RangeAction<?>>> rangeActionsPerState = new HashMap<>();
+        for (OptimizationPerimeter perimeter : inputs.getOptimizationPerimeters()) {
+            optimizedCnecs.addAll(perimeter.getOptimizedFlowCnecs());
+            rangeActionsPerState.putAll(perimeter.getRangeActionsPerState());
+        }
+        return new MinCostHardFiller(
+            optimizedCnecs,
+            //Modify the way range actions are handled in the filler?
+            //Right now all time steps are just considered to be different states
+            rangeActionsPerState
         );
     }
 
