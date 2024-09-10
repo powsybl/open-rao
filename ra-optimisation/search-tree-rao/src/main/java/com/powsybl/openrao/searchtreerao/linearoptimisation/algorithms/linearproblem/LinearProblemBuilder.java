@@ -40,7 +40,7 @@ public class LinearProblemBuilder {
         if (parameters.getObjectiveFunction().relativePositiveMargins()) {
             this.withProblemFiller(buildMaxMinRelativeMarginFiller(inputs, parameters));
         } else if (parameters.getObjectiveFunction().isMinCost()) {
-            this.withProblemFiller(buildMinCostHardFiller(inputs));
+            this.withProblemFiller(buildMinCostFiller(inputs));
         } else {
             this.withProblemFiller(buildMaxMinMarginFiller(inputs, parameters));
         }
@@ -135,8 +135,8 @@ public class LinearProblemBuilder {
         );
     }
 
-    private ProblemFiller buildMinCostHardFiller(IteratingLinearOptimizerInput inputs) {
-        return new MinCostHardFiller(
+    private ProblemFiller buildMinCostFiller(IteratingLinearOptimizerInput inputs) {
+        return new MinCostFiller(
             inputs.getOptimizationPerimeter().getOptimizedFlowCnecs(),
             inputs.getOptimizationPerimeter().getRangeActionsPerState()
         );
