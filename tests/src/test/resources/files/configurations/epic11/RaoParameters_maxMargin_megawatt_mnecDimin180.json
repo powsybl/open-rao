@@ -59,7 +59,7 @@
         "shuntCompensatorVoltageControlOn" : false,
         "readSlackBus" : true,
         "writeSlackBus" : true,
-        "dc" : false,
+        "dc" : true,
         "distributedSlack" : true,
         "balanceType" : "PROPORTIONAL_TO_GENERATION_P",
         "dcUseTransformerRatio" : true,
@@ -71,7 +71,7 @@
   },
   "extensions" : {
     "mnec-parameters" : {
-      "acceptable-margin-decrease" : 20.0,
+      "acceptable-margin-decrease" : 180.0,
       "violation-cost" : 10.0,
       "constraint-adjustment-coefficient" : 0.0
     }
