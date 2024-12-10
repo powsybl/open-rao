@@ -110,7 +110,7 @@ Feature: US 7.10: Search-tree RAO with loopflow limitation
     Then the remedial action "Open_BE1_BE3" is used in preventive
     Then the remedial action "Open_NL1_NL2" is used in preventive
 
-  @fast @rao @mock @ac @preventive-only @loopflow
+  @fast @rao @mock @ac @preventive-only @loopflow @to-be-executed
   Scenario: US 7.10.6: Complex search tree RAO with LF limitation
     Given network file is "common/TestCase12Nodes2PSTs.uct"
     Given crac file is "epic7/crac_lf_rao_4.json"
