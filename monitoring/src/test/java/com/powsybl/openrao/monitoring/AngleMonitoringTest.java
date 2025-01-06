@@ -364,5 +364,18 @@ class AngleMonitoringTest {
         assertFalse(raoResultWithAngleMonitoring.isSecure());
     }
 
+    @Test
+    void testNoZonalDataInputForAngleMonitoring() {
+        setUpCracFactory("network.xiidm");
+        mockCurativeStatesSecure();
+        naL1Cur = crac.newNetworkAction()
+            .withId("Injection L1 - 2")
+            .newLoadAction().withNetworkElement("LD2").withActivePowerValue(50.).add()
+            .newOnConstraintUsageRule().withInstant(CURATIVE_INSTANT_ID).withCnec(acCur1.getId()).withUsageMethod(UsageMethod.AVAILABLE).add()
+            .add();
+        MonitoringInput monitoringInput = new MonitoringInput.MonitoringInputBuilder().withCrac(crac).withNetwork(network).withRaoResult(raoResult).withPhysicalParameter(PhysicalParameter.ANGLE).build();
+        OpenRaoException e = assertThrows(OpenRaoException.class, () -> Monitoring.runAngleAndUpdateRaoResult("OpenLoadFlow", loadFlowParameters, 2, monitoringInput));
+    }
+
 }
 
