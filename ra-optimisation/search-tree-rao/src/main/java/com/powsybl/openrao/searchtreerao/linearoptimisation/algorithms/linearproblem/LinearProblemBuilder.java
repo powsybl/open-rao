@@ -132,7 +132,7 @@ public class LinearProblemBuilder {
         return new MaxMinRelativeMarginFiller(
             inputs.optimizationPerimeter().getOptimizedFlowCnecs(),
             inputs.preOptimizationFlowResult(),
-            parameters.getObjectiveFunction().getUnit(),
+            parameters.getObjectiveFunctionUnit(),
             parameters.getMaxMinRelativeMarginParameters()
         );
     }

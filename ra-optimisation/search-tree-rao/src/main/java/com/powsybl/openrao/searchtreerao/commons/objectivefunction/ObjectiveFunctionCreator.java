@@ -62,7 +62,7 @@ public class ObjectiveFunctionCreator extends AbstractObjectiveFunctionCreator {
         if (raoParameters.hasExtension(MnecParametersExtension.class)) {
             virtualCostEvaluators.add(new MnecViolationCostEvaluator(
                 flowCnecs.stream().filter(Cnec::isMonitored).collect(Collectors.toSet()),
-                raoParameters.getObjectiveFunctionParameters().getType().getUnit(),
+                raoParameters.getObjectiveFunctionParameters().getUnit(),
                 initialFlowResult,
                 raoParameters.getExtension(MnecParametersExtension.class)
             ));

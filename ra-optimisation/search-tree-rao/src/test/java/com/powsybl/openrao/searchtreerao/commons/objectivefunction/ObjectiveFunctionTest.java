@@ -142,7 +142,8 @@ class ObjectiveFunctionTest {
     @Test
     void testBuildForInitialSensitivityComputationCostlyOptimizationAmpere() {
         RaoParameters raoParameters = new RaoParameters();
-        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST_IN_AMPERE);
+        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST);
+        raoParameters.getObjectiveFunctionParameters().setUnit(Unit.AMPERE);
         assertTrue(raoParameters.getObjectiveFunctionParameters().getType().costOptimization());
 
         ObjectiveFunction objectiveFunction = ObjectiveFunction.buildForInitialSensitivityComputation(Set.of(), raoParameters, Set.of());
@@ -153,7 +154,8 @@ class ObjectiveFunctionTest {
     @Test
     void testBuildForInitialSensitivityComputationCostlyOptimizationMegawatt() {
         RaoParameters raoParameters = new RaoParameters();
-        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST_IN_MEGAWATT);
+        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST);
+        raoParameters.getObjectiveFunctionParameters().setUnit(Unit.MEGAWATT);
         assertTrue(raoParameters.getObjectiveFunctionParameters().getType().costOptimization());
 
         ObjectiveFunction objectiveFunction = ObjectiveFunction.buildForInitialSensitivityComputation(Set.of(), raoParameters, Set.of());
@@ -164,7 +166,8 @@ class ObjectiveFunctionTest {
     @Test
     void testBuildCostlyOptimizationAmpere() {
         RaoParameters raoParameters = new RaoParameters();
-        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST_IN_AMPERE);
+        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST);
+        raoParameters.getObjectiveFunctionParameters().setUnit(Unit.AMPERE);
         assertTrue(raoParameters.getObjectiveFunctionParameters().getType().costOptimization());
 
         ObjectiveFunction objectiveFunction = ObjectiveFunction.build(Set.of(), Set.of(), null, null, Set.of(), raoParameters, Set.of());
@@ -175,7 +178,8 @@ class ObjectiveFunctionTest {
     @Test
     void testBuildCostlyOptimizationMegawatt() {
         RaoParameters raoParameters = new RaoParameters();
-        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST_IN_MEGAWATT);
+        raoParameters.getObjectiveFunctionParameters().setType(ObjectiveFunctionParameters.ObjectiveFunctionType.MIN_COST);
+        raoParameters.getObjectiveFunctionParameters().setUnit(Unit.MEGAWATT);
         assertTrue(raoParameters.getObjectiveFunctionParameters().getType().costOptimization());
 
         ObjectiveFunction objectiveFunction = ObjectiveFunction.build(Set.of(), Set.of(), null, null, Set.of(), raoParameters, Set.of());
