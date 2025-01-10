@@ -11,6 +11,7 @@ import com.powsybl.openrao.data.crac.api.State;
 import com.powsybl.openrao.data.crac.api.cnec.Cnec;
 import com.powsybl.openrao.data.crac.api.cnec.FlowCnec;
 import com.powsybl.openrao.raoapi.parameters.RaoParameters;
+import com.powsybl.openrao.raoapi.parameters.extensions.LoadFlowAndSensitivityParameters;
 import com.powsybl.openrao.raoapi.parameters.extensions.LoopFlowParametersExtension;
 import com.powsybl.openrao.raoapi.parameters.extensions.MnecParametersExtension;
 import com.powsybl.openrao.searchtreerao.commons.marginevaluator.MarginEvaluator;
@@ -79,8 +80,8 @@ public class ObjectiveFunctionCreator extends AbstractObjectiveFunctionCreator {
 
         // If sensi failed, create a high virtual cost via SensitivityFailureOvercostEvaluator
         // to ensure that corresponding leaf is not selected
-        if (raoParameters.getLoadFlowAndSensitivityParameters().getSensitivityFailureOvercost() > 0) {
-            virtualCostEvaluators.add(new SensitivityFailureOvercostEvaluator(flowCnecs, raoParameters.getLoadFlowAndSensitivityParameters().getSensitivityFailureOvercost()));
+        if (LoadFlowAndSensitivityParameters.getSensitivityFailureOvercost(raoParameters) > 0) {
+            virtualCostEvaluators.add(new SensitivityFailureOvercostEvaluator(flowCnecs, LoadFlowAndSensitivityParameters.getSensitivityFailureOvercost(raoParameters)));
         }
 
         return virtualCostEvaluators;
