@@ -152,7 +152,9 @@ public class LinearProblemBuilder {
             inputs.initialFlowResult(),
             inputs.optimizationPerimeter().getMonitoredFlowCnecs(),
             parameters.getObjectiveFunctionUnit(),
-            parameters.getMnecParameters()
+            parameters.getMnecParametersExtension().getViolationCost(),
+            parameters.getMnecParameters().getAcceptableMarginDecrease(),
+            parameters.getMnecParametersExtension().getConstraintAdjustmentCoefficient()
         );
     }
 
@@ -160,7 +162,8 @@ public class LinearProblemBuilder {
         return new MaxLoopFlowFiller(
             inputs.optimizationPerimeter().getLoopFlowCnecs(),
             inputs.initialFlowResult(),
-            parameters.getLoopFlowParameters()
+            parameters.getLoopFlowParameters(),
+            parameters.getLoopFlowParametersExtension()
         );
     }
 
